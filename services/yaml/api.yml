@@ -1,0 +1,111 @@
+paths:
+  /health:
+    get:
+      tags:
+        - Product Management
+      summary: Health check
+      description: Health check
+      produces:
+        - application/json
+      responses:
+        200:
+          description: GET successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
+  /product:
+    post:
+      tags:
+        - Product Management
+      summary: Add a new product
+      description: Add a new product
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+      - name: new product
+        in: body
+        required: true
+        description: new product to be added
+      responses:
+        200:
+          description: Save successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
+    get:
+      tags:
+        - Product Management
+      summary: Get All products
+      description: Get All products
+      produces:
+        - application/json
+      responses:
+        200:
+          description: GET successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
+  /checkauth:
+    get:
+      tags:
+        - Validate
+      summary: Validate user and grant code
+      description: Validate user and grant code
+      produces:
+        - application/json
+      responses:
+        200:
+          description: GET successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
+definitions:
+  success:
+    required:
+      - err
+      - message
+    properties:
+      err:
+        type: string
+      message:
+        type: object
+  defaultError:
+    required:
+      - err
+      - message
+    properties:
+      err:
+        type: integer
+        format: int32
+      message:
+        type: string
