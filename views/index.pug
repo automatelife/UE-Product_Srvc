@@ -1,5 +1,22 @@
 extends layout
 
 block content
-  body(class='sc-bod')
-    #message-bar United Effects Domain Service
+  section#head.section
+    .container.keyPad
+      .row
+        .col-md-10.col-lg-10.col-md-offset-1.col-lg-offset-1.text-center
+          h2.title United Effects Platform
+          h3.subtitle UE Auth Product Service
+          h4.tagline
+            | A Product management service for the UE Auth IDM system.
+            br
+            |                    Allows registration of multiple products on the platform.
+          p
+          .row
+            .col-md-4
+              a.btn.btn-default.btn-lg.btn-block(href='/docs' style="font-size: 1.6em;") Swagger&nbsp;
+            .col-md-4
+              a.btn.btn-default.btn-lg.btn-block(href='https://auth.unitedeffects.com' style="font-size: 1.6em;") Auth UI&nbsp;
+            .col-md-4
+              a.btn.btn-default.btn-lg.btn-block(href='https://github.com/UnitedEffects/UE-Product_Srvc' style="font-size: 1.6em;") Documentation&nbsp;
+
