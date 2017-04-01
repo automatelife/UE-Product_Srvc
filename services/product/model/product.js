@@ -19,25 +19,17 @@ var productSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    test_url: {
-        type: String,
-        required: true
-    },
-    test_mode: {
-        type: Boolean,
-        default: false
-    },
     owner: {
         type: String,
         required: true
     },
-    domains: {
-        type: Array,
-        required: false
-    },
     created: {
         type: Date,
         default: moment().format()
+    },
+    active: {
+        type: Boolean,
+        default: true
     },
     meta: {
         type: Object,

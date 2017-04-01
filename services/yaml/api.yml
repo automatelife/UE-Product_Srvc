@@ -1,8 +1,168 @@
 paths:
+  /log/definitions:
+    get:
+      tags:
+        - Health
+      summary: How to utilize logs
+      description: Information on how to utilize logs
+      produces:
+        - application/json
+      responses:
+        200:
+          description: GET successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
+  /logs:
+    get:
+      tags:
+        - Health
+      summary: ADMIN ONLY - Return all system logs
+      description: ADMIN ONLY - Return all system logs
+      produces:
+        - application/json
+      responses:
+        200:
+          description: GET successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
+  /logs/{code}:
+    get:
+      tags:
+        - Health
+      summary: ADMIN ONLY - Return system logs with code specified
+      description: ADMIN ONLY - Return system logs with code specified
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+      - name: code
+        type: string
+        in: path
+        required: true
+        description: Code to query
+      responses:
+        200:
+          description: GET successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
+  /log/search:
+    get:
+      tags:
+        - Health
+      summary: ADMIN ONLY - Search logs for a specific keyword
+      description: ADMIN ONLY - Search logs for a specific keyword
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+      - name: q
+        type: string
+        in: query
+        required: true
+        description: Search term or keyword
+      responses:
+        200:
+          description: GET successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
+  /log:
+    post:
+      tags:
+        - Health
+      summary: ADMIN ONLY - Externally add a log entry
+      description: ADMIN ONLY - Externally add a log entry
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+      - name: log
+        in: body
+        required: true
+        description: new log entry to be added
+        schema:
+          $ref: '#/definitions/logObject'
+      responses:
+        200:
+          description: GET successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
+  /logs/range:
+    post:
+      tags:
+        - Health
+      summary: ADMIN ONLY - Return logs from a date range
+      description: ADMIN ONLY - Return logs from a date range
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+      - name: log range
+        in: body
+        required: true
+        description: range to search
+        schema:
+          $ref: '#/definitions/logRange'
+      responses:
+        200:
+          description: GET successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
   /health:
     get:
       tags:
-        - Product Management
+        - Health
       summary: Health check
       description: Health check
       produces:
@@ -35,6 +195,8 @@ paths:
         in: body
         required: true
         description: new product to be added
+        schema:
+          $ref: '#/definitions/productObject'
       responses:
         200:
           description: Save successful
@@ -55,6 +217,43 @@ paths:
       description: Get All products
       produces:
         - application/json
+      responses:
+        200:
+          description: GET successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
+  /product/hooked/{slug}:
+    get:
+      tags:
+        - Product Management
+      summary: Get a Product by Slug
+      description: Get a Product by Slug
+      produces:
+        - application/json
+      parameters:
+        - name: slug
+          in: path
+          description: slug of the product to return
+          type: string
+          required: true
+        - name: code
+          in: query
+          description: webhook code if not logged in
+          type: string
+          required: false
+        - name: active
+          in: query
+          description: what active value should be searched (true|false)? Null (empty) returns all
+          type: boolean
+          required: false
       responses:
         200:
           description: GET successful
@@ -109,3 +308,19 @@ definitions:
         format: int32
       message:
         type: string
+  productObject:
+    required:
+      - name
+      - url
+      - owner
+    properties:
+      name:
+        type: string
+      slug:
+        type: string
+      url:
+        type: string
+      active:
+        type: boolean
+      meta:
+        type: object

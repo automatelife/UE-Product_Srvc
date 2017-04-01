@@ -53,6 +53,10 @@ app.use(swagger.init(app, {
     },
     tags: [
         {
+            name: "Health",
+            description: "Logs and Health"
+        },
+        {
             name: "Product Management",
             description: "New Products"
         },

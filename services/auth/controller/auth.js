@@ -54,10 +54,11 @@ passport.use('basicWithCode', new BasicStrategy({
 
 passport.use('bearer', new BearerStrategy(
     function(accessToken, callback) {
+        if (!accessToken) return callback(null, false);
         var lookup = accessToken.split('.');
-        if(lookup.length<2) return callback(null, false);
-        var userId = Buffer.from(lookup[0], 'base64').toString('ascii');
-        var tokenVal = Buffer.from(lookup[1], 'base64').toString('ascii');
+        if (!lookup.length >= 2) return callback(null, false);
+        var userId = (lookup[0]) ? Buffer.from(lookup[0], 'base64').toString('ascii') : null;
+        var tokenVal = (lookup[1]) ? Buffer.from(lookup[1], 'base64').toString('ascii') : null;
         Token.findOneAsync({ user_id: userId })
             .then(function(token){
                 if(!token) {

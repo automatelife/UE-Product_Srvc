@@ -3,6 +3,7 @@ var product = require('../services/product/controller/api');
 var authApi = require('../services/auth/controller/api');
 var helper = require('../services/helper');
 var config = require('../config');
+var logApi = require('../services/log/controller/api');
 var router = express.Router();
 
 /* GET api listing. */
@@ -19,16 +20,23 @@ router.get('/', function(req, res, next) {
 });
 
 //register and authorization
-router.post('/product', authApi.isBearerAdmin, product.getProducts);
-router.get('/product', authApi.isBearerAdmin, product.postProduct);
-
+router.get('/product', authApi.isBearerAuthenticated, product.getProducts);
+router.post('/product', product.postProduct);
+router.get('/product/:slug', authApi.isBearerAuthenticated, product.returnProductSlug);
+router.get('/product/hooked/:slug', product.returnProductSlug);
 //auth check
-router.get('/checkauth', authApi.isBearerAuthenticated, authApi.validate); //could remove this later
+router.get('/checkauth', authApi.isBearerAuthenticated, authApi.validate); //todo could remove this later
 
-//healthcheck
+//logs
+router.get('/log/definitions', authApi.isBearerAuthenticated, logApi.logDefinitions);
+router.post('/log', authApi.isBearerAuthenticated, logApi.newLog);
+router.get('/logs', authApi.isBearerAuthenticated, logApi.returnLogs);
+router.post('/logs/range', authApi.isBearerAuthenticated, logApi.returnRange);
+router.get('/logs/:code', authApi.isBearerAuthenticated, logApi.returnByCode);
+router.get('/log/search', authApi.isBearerAuthenticated, logApi.search);
 router.get('/health', function(req, res){
     res.json({err: null, data: {server: 'running', mongo: helper.mongoStatus()}});
-});
+}); //todo auth
 
 
 

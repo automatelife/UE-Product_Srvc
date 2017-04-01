@@ -19,9 +19,21 @@ var productFactory = {
     postProduct: function(options, cb){
         var product = new Product(options);
 
-        product.saveAsyc()
-            .then(function(saved){return cb(null, send.successSaved(saved));})
+        product.save()
+            .then(function(saved){return cb(null, send.success(saved));})
             .catch(function (err) {return cb(send.failErr(err), null);});
+    },
+    returnProductSlug: function(slug, active, cb){
+        query = {slug:slug};
+        if(active!=null) query['active'] = active;
+        Product.findOne(query)
+            .then(function(results){
+                if(!results) cb(send.fail404('This product was not found'), null);
+                return cb(null, send.success(results));
+            })
+            .catch(function(err){
+                return cb(send.failErr(err), null);
+            });
     }
 };
 
