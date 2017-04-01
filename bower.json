@@ -1,0 +1,35 @@
+{
+  "name": "ue-product-srvc",
+  "description": "A microservice to register products to the UE-Auth identity and license management system.",
+  "main": "",
+  "authors": [
+    "Bo Motlagh <borzou@theboeffect.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "ue-auth",
+    "auth2.0",
+    "authorization",
+    "token",
+    "united",
+    "effects",
+    "api",
+    "oauth",
+    "access",
+    "splice",
+    "splicechain"
+  ],
+  "homepage": "https://github.com/UnitedEffects/UE-Product_Srvc",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.7"
+  }
+}
