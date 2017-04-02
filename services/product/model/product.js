@@ -47,7 +47,6 @@ var productSchema = new mongoose.Schema({
 
 // Execute before each user.save() call
 productSchema.pre('save', function(callback) {
-    //console.log('log saved');
     return callback();
 });
 

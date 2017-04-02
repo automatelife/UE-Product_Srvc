@@ -5,6 +5,8 @@
 var Promise = require('bluebird');
 var Product = Promise.promisifyAll(require('../model/product'));
 var send = require('../../callback');
+var Intent = Promise.promisifyAll(require('../../events/controller/event'));
+var config = require('../../../config');
 
 var productFactory = {
     getProducts: function(cb){
@@ -50,6 +52,33 @@ var productFactory = {
             .then(function(result){
                 if(!result) return cb(null, null);
                 return cb(null, send.success(result));
+            })
+            .catch(function(error){
+                return cb(send.failErr(error), null);
+            })
+    },
+    prepareIntent: function(id, change, cb){
+        if(!change.slug && !change.name && typeof change.active === 'undefined') return cb(null, null);
+        Product.findOne({_id:id})
+            .then(function(prod){
+                var event = {
+                    product_id: id,
+                    product_slug: prod.slug,
+                    request: {
+                        method: 'PATCH',
+                        uri: config.userApiServer+'/api/user/products/hooked/'+prod.slug+'?code='+config.webhook,
+                        json: {
+                            product_name: change.name,
+                            product_slug: change.slug,
+                            active: change.active
+                        }
+                    }
+                }
+                return Intent.createIntentAsync(event);
+            })
+            .then(function(event){
+                if(!event) return cb('Event Intent Not Created', null)
+                return cb(null, event);
             })
             .catch(function(error){
                 return cb(send.failErr(error), null);

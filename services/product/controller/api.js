@@ -6,10 +6,12 @@ var send = require('../../callback');
 var Promise = require('bluebird');
 var product = Promise.promisifyAll(require('./product'));
 var config = require('../../../config');
+var Intent = Promise.promisifyAll(require('../../events/controller/event'));
+var log = require('../../log/controller/log');
 
 var productApi = {
     getProducts: function(req, res){
-        if(req.user.role!=1) respond.sendUnauthorized(res);
+        //if(req.user.role!=1) respond.sendUnauthorized(res);
         product.getProductsAsync()
             .then(function(output){
                 return respond.sendJson(res, output)})
@@ -59,21 +61,45 @@ var productApi = {
             });
     },
     findOneAndUpdate: function(req, res){
-        //if slug, need to notify user service here
         if(req.user.role!=1) return respond.sendUnauthorized(res);
-        product.findOneAndUpdateAsync(req.params.id, req.body)
+        var eventRec = {};
+        product.prepareIntentAsync(req.params.id, req.body)
+            .then(function(event){
+                eventRec = event;
+                return product.findOneAndUpdateAsync(req.params.id, req.body)
+            })
             .then(function(output){
-                return respond.sendJson(res, output)})
+                if(eventRec) {
+                    Intent.processEvent(eventRec._id, function (err, record) {
+                        if (err) {
+                            log.error('An event may not have been processed', err);
+                        }
+                    });
+                }
+                return respond.sendJson(res, output);
+            })
             .catch(function(error){
                 return respond.sendJson(res, error);
             });
     },
     deleteProduct: function(req, res){
         if(req.user.role!=1) return respond.sendUnauthorized(res);
-        //need to notify user service here
-        product.findOneAndUpdateAsync(req.params.id, {active: false})
+        var eventRec = {};
+        product.prepareIntentAsync(req.params.id, {active:false})
+            .then(function(event){
+                eventRec = event;
+                return product.findOneAndUpdateAsync(req.params.id, {active: false})
+            })
             .then(function(output){
-                return respond.sendJson(res, output)})
+                if(eventRec) {
+                    Intent.processEvent(eventRec._id, function (err, record) {
+                        if (err) {
+                            log.error('An event may not have been processed', err);
+                        }
+                    });
+                }
+                return respond.sendJson(res, output);
+            })
             .catch(function(error){
                 return respond.sendJson(res, error);
             });

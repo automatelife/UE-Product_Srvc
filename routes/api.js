@@ -38,7 +38,7 @@ router.get('/logs/:code', authApi.isBearerAuthenticated, logApi.returnByCode);
 router.get('/log/search', authApi.isBearerAuthenticated, logApi.search);
 router.get('/health', authApi.isBearerAuthenticated, function(req, res){
     res.json({err: null, data: {server: 'running', mongo: helper.mongoStatus()}});
-}); //todo auth
+});
 
 
 
