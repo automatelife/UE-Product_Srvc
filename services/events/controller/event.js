@@ -6,6 +6,8 @@ var Promise = require('bluebird');
 var Intent = Promise.promisifyAll(require('../model/intent'));
 var request = Promise.promisify(require('request'));
 var send = require('../../callback');
+var log = require('../../log/controller/log');
+var moment = require('moment');
 
 var eventFactory = {
     createIntent: function(options, cb){
@@ -77,6 +79,23 @@ var eventFactory = {
             })
             .then(function(output){
                 return cb(null, output)
+            })
+            .catch(function(error){
+                return cb(send.fail500(error), null);
+            })
+    },
+    checkAndProcessAllIntent: function(cb){
+        Intent.find({processed: false})
+            .then(function(all){
+                return all;
+            })
+            .each(function(event){
+                eventFactory.processEvent(event._id, function(err, result){
+                    if(err) log.error('Error processing event '+event._id+' at '+moment(),format('MMMM Do YYYY, hh:mm:ss a'), err);
+                })
+            })
+            .then(function(results){
+                return cb(null, send.success());
             })
             .catch(function(error){
                 return cb(send.fail500(error), null);

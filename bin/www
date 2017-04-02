@@ -15,6 +15,9 @@ var conn = mongoose.connection;
 var Promise = require('bluebird');
 var product = Promise.promisifyAll(require('../services/product/controller/product'));
 var log = require('../services/log/controller/log');
+var im = require('is-master');
+var CronJob = require('node-cron');
+var event = Promise.promisifyAll(require('../services/events/controller/event'));
 
 var mongoConnect = config.defaultMongo;
 if(process.env.MONGO){
@@ -49,6 +52,28 @@ function connectionM(){
 }
 
 connectionM();
+im.start();
+//run this every 24 hours
+CronJob.schedule('0 */10 * * * *', function(){
+    //making sure this only runs on a single node of the license service cluster with is-master
+    if(im.master)job();
+    else{
+        //its possible that this node is the master but hasn't been updated b/c the original master went offline less than 2 minutes ago
+        setTimeout(function(){
+            if(im.master) job();
+        },200000);
+    }
+},true);
+
+function job(){
+    event.checkAndProcessAllIntentAsync()
+        .then(function(results){
+            //console.log('completed without issue');
+        })
+        .catch(function(error){
+            log.error('There was a problem processing unfinished events', error);
+        })
+}
 
 /**
  * Create HTTP server.
