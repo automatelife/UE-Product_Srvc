@@ -27,6 +27,10 @@ var productSchema = new mongoose.Schema({
         type: Date,
         default: moment().format()
     },
+    private: {
+        type: Boolean,
+        default: false
+    },
     active: {
         type: Boolean,
         default: true
