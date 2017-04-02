@@ -234,7 +234,7 @@ paths:
     get:
       tags:
         - Product Management
-      summary: Get a Product by Slug
+      summary: Get a Product by Slug - WEBHOOK ACCESS
       description: Get a Product by Slug
       produces:
         - application/json
@@ -267,14 +267,110 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/defaultError'
-  /checkauth:
+  /product/{slug}:
     get:
       tags:
-        - Validate
-      summary: Validate user and grant code
-      description: Validate user and grant code
+        - Product Management
+      summary: Get a Product by Slug
+      description: Get a Product by Slug
       produces:
         - application/json
+      parameters:
+        - name: slug
+          in: path
+          description: slug of the product to return
+          type: string
+          required: true
+        - name: active
+          in: query
+          description: what active value should be searched (true|false)? Null (empty) returns all
+          type: boolean
+          required: false
+      responses:
+        200:
+          description: GET successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
+  /product/{id}:
+    get:
+      tags:
+        - Product Management
+      summary: Get a Product by ID
+      description: Get a Product by ID
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: id of the product to return
+          type: string
+          required: true
+      responses:
+        200:
+          description: GET successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
+    delete:
+      tags:
+        - Product Management
+      summary: Delete a Product by ID (active=false)
+      description: Delete a Product by ID
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: id of the product to delete
+          type: string
+          required: true
+      responses:
+        200:
+          description: GET successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
+    patch:
+      tags:
+        - Product Management
+      summary: Update a Product by ID and patch
+      description: Update a Product by ID and patch
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: id of the product to patch
+          type: string
+          required: true
+        - name: update
+          in: body
+          description: updates to send
+          required: true
+          schema:
+            $ref: '#/definitions/productObjectPatch'
       responses:
         200:
           description: GET successful
@@ -312,13 +408,29 @@ definitions:
     required:
       - name
       - url
-      - owner
     properties:
       name:
         type: string
       slug:
         type: string
       url:
+        type: string
+      private:
+        type: boolean
+        default: false
+      active:
+        type: boolean
+      meta:
+        type: object
+  productObjectPatch:
+    properties:
+      name:
+        type: string
+      slug:
+        type: string
+      url:
+        type: string
+      owner:
         type: string
       private:
         type: boolean

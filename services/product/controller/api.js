@@ -31,14 +31,49 @@ var productApi = {
                 return respond.sendJson(res, error);
             });
     },
-    returnProductSlug: function(req, res){
-        if(!req.user && req.query.code!=config.webhook) respond.sendUnauthorized(res);
-        if(req.user && req.user.role!=1) respond.sendUnauthorized(res);
+    returnProductSlugHook: function(req, res){
+        if(req.query.code!=config.webhook) return respond.sendUnauthorized(res);
         product.returnProductSlugAsync(req.params.slug, req.query.active)
             .then(function(output){
                 return respond.sendJson(res, output)})
             .catch(function(error){
-                return respond.sendJson(res, error); //later next for id
+                return respond.sendJson(res, error);
+            });
+    },
+    returnProductSlug: function(req, res, next){
+        if(req.user.role!=1) return respond.sendUnauthorized(res);
+        product.returnProductSlugAsync(req.params.slug, req.query.active)
+            .then(function(output){
+                return respond.sendJson(res, output)})
+            .catch(function(error){
+                next();
+            });
+    },
+    returnProduct: function(req, res){
+        if(req.user.role!=1) return respond.sendUnauthorized(res);
+        product.returnProductAsync(req.params.id)
+            .then(function(output){
+                return respond.sendJson(res, output)})
+            .catch(function(error){
+                return respond.sendJson(res, error);
+            });
+    },
+    findOneAndUpdate: function(req, res){
+        if(req.user.role!=1) return respond.sendUnauthorized(res);
+        product.findOneAndUpdateAsync(req.params.id, req.body)
+            .then(function(output){
+                return respond.sendJson(res, output)})
+            .catch(function(error){
+                return respond.sendJson(res, error);
+            });
+    },
+    deleteProduct: function(req, res){
+        if(req.user.role!=1) return respond.sendUnauthorized(res);
+        product.findOneAndUpdateAsync(req.params.id, {active: false})
+            .then(function(output){
+                return respond.sendJson(res, output)})
+            .catch(function(error){
+                return respond.sendJson(res, error);
             });
     }
 };

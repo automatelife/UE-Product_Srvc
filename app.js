@@ -49,7 +49,7 @@ app.use(swagger.init(app, {
     info: {
         version: '1.0.0',
         title: 'United Effects Product Authorization',
-        description: 'UE Product registers products to have licenses and users registered against. All endpoints require ADMIN access.'
+        description: 'UE Product registers products to have licenses and users registered against. All endpoints require ADMIN access except those with webhook control.'
     },
     tags: [
         {

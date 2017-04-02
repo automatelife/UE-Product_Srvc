@@ -34,6 +34,26 @@ var productFactory = {
             .catch(function(err){
                 return cb(send.failErr(err), null);
             });
+    },
+    returnProduct: function(id, cb){
+        Product.findOne({_id:id})
+            .then(function(results){
+                if(!results) cb(send.fail404('This product was not found'), null);
+                return cb(null, send.success(results));
+            })
+            .catch(function(err){
+                return cb(send.failErr(err), null);
+            });
+    },
+    findOneAndUpdate: function(id, options, cb){
+        Product.findOneAndUpdate({_id: id}, options, {new: true})
+            .then(function(result){
+                if(!result) return cb(null, null);
+                return cb(null, send.success(result));
+            })
+            .catch(function(error){
+                return cb(send.failErr(error), null);
+            })
     }
 };
 
