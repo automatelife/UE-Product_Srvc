@@ -59,6 +59,7 @@ var productApi = {
             });
     },
     findOneAndUpdate: function(req, res){
+        //if slug, need to notify user service here
         if(req.user.role!=1) return respond.sendUnauthorized(res);
         product.findOneAndUpdateAsync(req.params.id, req.body)
             .then(function(output){
@@ -69,6 +70,7 @@ var productApi = {
     },
     deleteProduct: function(req, res){
         if(req.user.role!=1) return respond.sendUnauthorized(res);
+        //need to notify user service here
         product.findOneAndUpdateAsync(req.params.id, {active: false})
             .then(function(output){
                 return respond.sendJson(res, output)})
