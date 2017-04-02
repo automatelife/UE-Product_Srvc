@@ -13,6 +13,7 @@ var config = {
         url: 'https://auth.unitedeffects.com',
         owner: 'admin',
         private: true,
+        private_code: 'YOUR-PRIVATE-CODE-HERE',
         meta: {
             info: 'Auto created on startup'
         }

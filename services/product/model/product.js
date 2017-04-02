@@ -31,6 +31,10 @@ var productSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    private_code: {
+        type: String,
+        required: false
+    },
     active: {
         type: Boolean,
         default: true
