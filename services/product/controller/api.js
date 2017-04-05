@@ -61,22 +61,56 @@ var productApi = {
             });
     },
     findOneAndUpdate: function(req, res){
-        if(req.user.role!=1) return respond.sendUnauthorized(res);
-        var eventRec = {};
-        product.prepareIntentAsync(req.params.id, req.body)
-            .then(function(event){
-                eventRec = event;
+        //if(req.user.role!=1) return respond.sendUnauthorized(res);
+        var sendOut = {};
+        var eventRec = [];
+        var success = true;
+        product.returnProductAsync(req.params.id)
+            .then(function(prod){
+                if(!req.body.name && !req.body.slug && typeof req.body.active === 'undefined') return 'SAFE';
+                var event =  [{
+                    product_id: req.params.id,
+                    product_slug: prod.data.slug,
+                    request: {
+                        method: 'PATCH',
+                        uri: config.userApiServer+'/api/user/products/hooked/'+prod.data.slug+'?code='+config.webhook,
+                        json: {
+                            product_name: req.body.name,
+                            product_slug: req.body.slug,
+                            active: req.body.active
+                        }
+                    }
+                },{
+                    product_id: req.params.id,
+                    product_slug: prod.data.slug,
+                    request: {
+                        method: 'PATCH',
+                        uri: config.licenseApiServer+'/api/licenses/product/'+prod.data.slug+'?code='+config.webhook,
+                        json: {
+                            product_name: req.body.name,
+                            product_slug: req.body.slug
+                        }
+                    }
+                }];
+
+                return product.prepareIntentAsync(req.params.id, event);
+            })
+            .then(function(results){
+                if(!results) return respond.sendJson(res, send.fail500('Intent not written'));
+                if(results!='SAFE') eventRec = results;
                 return product.findOneAndUpdateAsync(req.params.id, req.body)
             })
             .then(function(output){
-                if(eventRec) {
-                    Intent.processEvent(eventRec._id, function (err, record) {
-                        if (err) {
-                            log.error('An event may not have been processed', err);
-                        }
-                    });
-                }
-                return respond.sendJson(res, output);
+                sendOut = output;
+                return eventRec;
+            })
+            .each(function(event){
+                Intent.processEvent(event._id, function (err, record) {
+                    if (err) log.error('An event may not have been processed', err);
+                });
+            })
+            .then(function(output){
+                return respond.sendJson(res, sendOut);
             })
             .catch(function(error){
                 return respond.sendJson(res, error);

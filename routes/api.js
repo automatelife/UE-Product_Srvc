@@ -25,8 +25,8 @@ router.post('/product', authApi.isBearerAuthenticated, product.postProduct);
 router.get('/product/:slug', authApi.isBearerAuthenticated, product.returnProductSlug);
 router.get('/product/hooked/:slug', product.returnProductSlugHook);
 router.get('/product/:id', authApi.isBearerAuthenticated, product.returnProduct);
-router.patch('/product/:id', authApi.isBearerAuthenticated, product.findOneAndUpdate);
-router.delete('/product/:id', authApi.isBearerAuthenticated, product.deleteProduct);
+router.patch('/product/:id', product.findOneAndUpdate);
+router.delete('/product/:id', authApi.isBearerAuthenticated, product.deleteProduct); //todo fix this now...
 
 
 //logs

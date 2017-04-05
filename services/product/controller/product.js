@@ -57,32 +57,30 @@ var productFactory = {
                 return cb(send.failErr(error), null);
             })
     },
-    prepareIntent: function(id, change, cb){
-        if(!change.slug && !change.name && typeof change.active === 'undefined') return cb(null, null);
-        Product.findOne({_id:id})
-            .then(function(prod){
-                var event = {
-                    product_id: id,
-                    product_slug: prod.slug,
-                    request: {
-                        method: 'PATCH',
-                        uri: config.userApiServer+'/api/user/products/hooked/'+prod.slug+'?code='+config.webhook,
-                        json: {
-                            product_name: change.name,
-                            product_slug: change.slug,
-                            active: change.active
-                        }
-                    }
-                }
-                return Intent.createIntentAsync(event);
-            })
-            .then(function(event){
-                if(!event) return cb('Event Intent Not Created', null)
-                return cb(null, event);
+    prepareIntent: function(id, events, cb){
+        var output = [];
+        events.forEach(function(event){
+            output.push(Intent.createIntentAsync(event));
+        });
+        /*
+         Intent.createIntentAsync(event)
+         .then(function(event){
+         if(!event) return cb('Event Intent Not Created', null);
+         return cb(null, event);
+         })
+         .catch(function(error){
+         return cb(send.failErr(error), null);
+         })
+         */
+
+        Promise.all(output)
+            .then(function(results){
+                return cb(null, results);
             })
             .catch(function(error){
                 return cb(send.failErr(error), null);
             })
+
     }
 };
 

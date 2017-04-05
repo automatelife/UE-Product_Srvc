@@ -21,6 +21,15 @@ var eventFactory = {
                 return cb(send.fail500(error), null);
             })
     },
+    createIntentBatch: function(batch, cb){
+        Intent.insert(batch)
+            .then(function(result){
+                return cb(null, result);
+            })
+            .catch(function(error){
+                return cb(send.fail500(error), null);
+            })
+    },
     findUnProcessed: function(cb){
         Intent.find({processed: false})
             .then(function(results){
