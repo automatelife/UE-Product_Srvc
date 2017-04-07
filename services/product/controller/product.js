@@ -57,30 +57,15 @@ var productFactory = {
                 return cb(send.failErr(error), null);
             })
     },
-    prepareIntent: function(id, events, cb){
-        var output = [];
-        events.forEach(function(event){
-            output.push(Intent.createIntentAsync(event));
-        });
-        /*
-         Intent.createIntentAsync(event)
-         .then(function(event){
-         if(!event) return cb('Event Intent Not Created', null);
-         return cb(null, event);
-         })
-         .catch(function(error){
-         return cb(send.failErr(error), null);
-         })
-         */
-
-        Promise.all(output)
-            .then(function(results){
-                return cb(null, results);
+    prepareIntent: function(event, cb){
+        Intent.createIntentAsync(event)
+            .then(function(event){
+                if(!event) return cb('Event Intent Not Created', null);
+                return cb(null, event);
             })
             .catch(function(error){
                 return cb(send.failErr(error), null);
-            })
-
+            });
     }
 };
 

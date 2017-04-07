@@ -8,6 +8,7 @@ var product = Promise.promisifyAll(require('./product'));
 var config = require('../../../config');
 var Intent = Promise.promisifyAll(require('../../events/controller/event'));
 var log = require('../../log/controller/log');
+var readyEvents = require('../../../events');
 
 var productApi = {
     getProducts: function(req, res){
@@ -61,42 +62,23 @@ var productApi = {
             });
     },
     findOneAndUpdate: function(req, res){
-        //if(req.user.role!=1) return respond.sendUnauthorized(res);
+        if(req.user.role!=1) return respond.sendUnauthorized(res);
         var sendOut = {};
         var eventRec = [];
-        var success = true;
+        if(req.body["_id"]) delete req.body._id;
         product.returnProductAsync(req.params.id)
             .then(function(prod){
                 if(!req.body.name && !req.body.slug && typeof req.body.active === 'undefined') return 'SAFE';
-                var event =  [{
-                    product_id: req.params.id,
-                    product_slug: prod.data.slug,
-                    request: {
-                        method: 'PATCH',
-                        uri: config.userApiServer+'/api/user/products/hooked/'+prod.data.slug+'?code='+config.webhook,
-                        json: {
-                            product_name: req.body.name,
-                            product_slug: req.body.slug,
-                            active: req.body.active
-                        }
-                    }
-                },{
-                    product_id: req.params.id,
-                    product_slug: prod.data.slug,
-                    request: {
-                        method: 'PATCH',
-                        uri: config.licenseApiServer+'/api/licenses/product/'+prod.data.slug+'?code='+config.webhook,
-                        json: {
-                            product_name: req.body.name,
-                            product_slug: req.body.slug
-                        }
-                    }
-                }];
+                var output = [];
+                readyEvents.productUpdates(req.body, prod.data).forEach(function(event){
+                    output.push(product.prepareIntentAsync(event));
+                });
 
-                return product.prepareIntentAsync(req.params.id, event);
+                return Promise.all(output);
             })
             .then(function(results){
                 if(!results) return respond.sendJson(res, send.fail500('Intent not written'));
+                if(results.length != readyEvents.productUpdatesCount() && results!='SAFE') return respond.sendJson(res, send.fail500('All events were not saved, aborting update'));
                 if(results!='SAFE') eventRec = results;
                 return product.findOneAndUpdateAsync(req.params.id, req.body)
             })
@@ -113,28 +95,44 @@ var productApi = {
                 return respond.sendJson(res, sendOut);
             })
             .catch(function(error){
+                console.log(error);
                 return respond.sendJson(res, error);
             });
     },
     deleteProduct: function(req, res){
         if(req.user.role!=1) return respond.sendUnauthorized(res);
-        var eventRec = {};
-        product.prepareIntentAsync(req.params.id, {active:false})
-            .then(function(event){
-                eventRec = event;
+        var sendOut = {};
+        var eventRec = [];
+        product.returnProductAsync(req.params.id)
+            .then(function(prod){
+                var output = [];
+                readyEvents.productUpdates({active: false}, prod.data).forEach(function(event){
+                    output.push(product.prepareIntentAsync(event));
+                });
+
+                return Promise.all(output);
+            })
+            .then(function(results){
+                console.log(results);
+                if(!results) return respond.sendJson(res, send.fail500('Intent not written'));
+                if(results.length != readyEvents.productUpdatesCount()) return respond.sendJson(res, send.fail500('All events were not saved, aborting update'));
+                eventRec = results;
                 return product.findOneAndUpdateAsync(req.params.id, {active: false})
             })
             .then(function(output){
-                if(eventRec) {
-                    Intent.processEvent(eventRec._id, function (err, record) {
-                        if (err) {
-                            log.error('An event may not have been processed', err);
-                        }
-                    });
-                }
-                return respond.sendJson(res, output);
+                sendOut = output;
+                return eventRec;
+            })
+            .each(function(event){
+                Intent.processEvent(event._id, function (err, record) {
+                    if (err) log.error('An event may not have been processed', err);
+                });
+            })
+            .then(function(output){
+                return respond.sendJson(res, sendOut);
             })
             .catch(function(error){
+                console.log(error);
                 return respond.sendJson(res, error);
             });
     }
