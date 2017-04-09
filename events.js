@@ -33,7 +33,7 @@ var events = {
         }]
     },
     productUpdatesCount: function(){
-        return this.productUpdates.length;
+        return this.productUpdates({},{}).length;
     }
 };
 
