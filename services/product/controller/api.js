@@ -12,7 +12,7 @@ var readyEvents = require('../../../events');
 
 var productApi = {
     getProducts: function(req, res){
-        //if(req.user.role!=1) respond.sendUnauthorized(res);
+        if(req.user.role!=1) respond.sendUnauthorized(res);
         product.getProductsAsync()
             .then(function(output){
                 return respond.sendJson(res, output)})
@@ -22,21 +22,21 @@ var productApi = {
             });
     },
     postProduct: function(req, res){
-        //if(req.user.role!=1) respond.sendUnauthorized(res);
+        if(req.user.role!=1) respond.sendUnauthorized(res);
         if(!req.body.name) respond.sendJson(res, send.fail417('Name is a required input'));
         if(!req.body.slug) req.body['slug'] = req.body.name.trim().toLowerCase().replace(/ /g, "_").replace(/\./g, "").replace(/!/g, "").replace(/\?/g, "").replace(/{/g, "").replace(/}/g, "");
-        req.body["owner"] = 'testingIDWithThis'; //req.user._id;
+        req.body["owner"] = req.user._id;
         product.postProductAsync(req.body)
             .then(function(output){
                 return respond.sendJson(res, output)})
             .catch(function(error){
-                if(error.stack) console.log(error.stack);
+                //if(error.stack) console.log(error.stack);
                 return respond.sendJson(res, error);
             });
     },
     returnProductSlugHook: function(req, res){
         if(req.query.code!=config.webhook) return respond.sendUnauthorized(res);
-        product.returnProductSlugAsync(req.params.slug, req.query.active)
+        product.returnProductSlugAsync(req.params.slug, true)
             .then(function(output){
                 return respond.sendJson(res, output)})
             .catch(function(error){

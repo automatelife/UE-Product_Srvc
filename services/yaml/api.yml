@@ -234,8 +234,8 @@ paths:
     get:
       tags:
         - Product Management
-      summary: Get a Product by Slug - WEBHOOK ACCESS
-      description: Get a Product by Slug
+      summary: Get a Product by Slug, active only - WEBHOOK ACCESS
+      description: Get a Product by Slug, active only
       produces:
         - application/json
       parameters:
@@ -248,11 +248,6 @@ paths:
           in: query
           description: webhook code if not logged in
           type: string
-          required: false
-        - name: active
-          in: query
-          description: what active value should be searched (true|false)? Null (empty) returns all
-          type: boolean
           required: false
       responses:
         200:

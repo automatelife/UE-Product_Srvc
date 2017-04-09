@@ -11,30 +11,7 @@ var callbackFactory = {
     successSaved: function(saved){
         return {
             err: null,
-            data: {
-                id: saved._id,
-                key: saved.key,
-                name: saved.name,
-                username: saved.username,
-                domains: saved.domains,
-                users: saved.users,
-                email: saved.email,
-                created: saved.created,
-                expires: saved.expires,
-                code: saved.code,
-                slug: saved.slug,
-                token: saved.token,
-                redirectUrl: saved.redirectUrl,
-                product: saved.product,
-                licenseId: saved.licenseId,
-                plan_name: saved.plan_name,
-                meta: saved.meta,
-                stripe_customer: saved.stripe_customer_id,
-                next_payment_due: saved.payment_due,
-                next_payment_amount: saved.payment_amount,
-                patched: saved.patched,
-                active: saved.active
-            }
+            data: saved
         }
     },
     fail: function(code, message){
@@ -90,7 +67,7 @@ var callbackFactory = {
             err: 500,
             data: {
                 code: err.code,
-                message: err.message
+                message: err.message || err
             }
         }
     }
