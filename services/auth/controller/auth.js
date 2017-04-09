@@ -65,7 +65,7 @@ passport.use('bearer', new BearerStrategy(
 
             if(!product) return callback(null, false);
             if(!domain) return callback(null, false);
-            Token.findOneAsync({user_id: userId})
+            Token.findOneAsync({ user_id: userId, product_slug: product, domain_slug: domain })
                 .then(function (token) {
                     if (!token) {
                         getBearerToken(accessToken, function(err, result){
@@ -142,7 +142,7 @@ var authFactory = {
     isBearerAuthenticated: passport.authenticate('bearer', { session: false }),
     isBasicAuthenticated: passport.authenticate('basic', {session: false}),
     saveToken: function (user, access, tokenVal, callback){
-        Token.findOneAndRemoveAsync({user_id:user._id})
+        Token.findOneAndRemoveAsync({user_id: user._id, product_slug: access.product, domain_slug: access.domain})
             .then(function(result){
                 var tCreated = user.token_created;
 

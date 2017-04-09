@@ -77,8 +77,8 @@ var productApi = {
                 return Promise.all(output);
             })
             .then(function(results){
-                if(!results) return respond.sendJson(res, send.fail500('Intent not written'));
-                if(results.length != readyEvents.productUpdatesCount() && results!='SAFE') return respond.sendJson(res, send.fail500('All events were not saved, aborting update'));
+                if(!results) return send.fail500('Intent not written');
+                if(results.length != readyEvents.productUpdatesCount() && results!='SAFE') return send.fail500('All events were not saved, aborting update');
                 if(results!='SAFE') eventRec = results;
                 return product.findOneAndUpdateAsync(req.params.id, req.body)
             })
@@ -114,8 +114,8 @@ var productApi = {
             })
             .then(function(results){
                 console.log(results);
-                if(!results) return respond.sendJson(res, send.fail500('Intent not written'));
-                if(results.length != readyEvents.productUpdatesCount()) return respond.sendJson(res, send.fail500('All events were not saved, aborting update'));
+                if(!results) return send.fail500('Intent not written');
+                if(results.length != readyEvents.productUpdatesCount()) return send.fail500('All events were not saved, aborting update');
                 eventRec = results;
                 return product.findOneAndUpdateAsync(req.params.id, {active: false})
             })
