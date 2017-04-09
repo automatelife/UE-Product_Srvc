@@ -24,10 +24,7 @@ var authApi = {
         helper.sendJson(res, {err:null, data: req.user});
     },
     isAuthenticated: auth.isAuthenticated,
-    isAuthenticatedLicId: auth.isAuthenticatedLicId,
-    isBearerAuthenticated: auth.isBearerAuthenticated,
-    isBearerAdmin: auth.isBearerAdmin,
-    isWebHookAuthenticated: auth.isWebHookAuthenticated
+    isBearerAuthenticated: auth.isBearerAuthenticated
 };
 
 module.exports = authApi;
