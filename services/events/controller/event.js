@@ -109,6 +109,15 @@ var eventFactory = {
             .catch(function(error){
                 return cb(send.fail500(error), null);
             })
+    },
+    eventIntentRollBack: function(event, cb){
+        Intent.findOneAndRemove({_id: event._id})
+            .then(function(results){
+                return cb(null, send.success());
+            })
+            .catch(function(error){
+                return cb(send.fail500(error), null);
+            })
     }
 };
 
