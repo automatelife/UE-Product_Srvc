@@ -95,12 +95,9 @@ var productApi = {
                 return respond.sendJson(res, sendOut);
             })
             .catch(function(error){
-                console.log(error);
                 eventRec.forEach(function(event){
                     Intent.eventIntentRollBack(event, function (err, record) {
-                        if (err) {
-                            log.error('An event may not have been processed', err);
-                        }//else console.log('rolled back: '+JSON.stringify(record));
+                        if (err) log.error('An event may not have been processed', err);
                     });
                 });
                 return respond.sendJson(res, error);
@@ -120,7 +117,6 @@ var productApi = {
                 return Promise.all(output);
             })
             .then(function(results){
-                //console.log(results);
                 if(!results) return send.fail500('Intent not written');
                 if(results.length != readyEvents.productUpdatesCount()) return send.fail500('All events were not saved, aborting update');
                 eventRec = results;
@@ -142,9 +138,7 @@ var productApi = {
                 console.log(error);
                 eventRec.forEach(function(event){
                     Intent.eventIntentRollBack(event, function (err, record) {
-                        if (err) {
-                            log.error('An event may not have been processed', err);
-                        }//else console.log('rolled back: '+JSON.stringify(record));
+                        if (err) log.error('An event may not have been processed', err);
                     });
                 });
                 return respond.sendJson(res, error);

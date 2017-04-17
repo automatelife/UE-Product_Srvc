@@ -26,10 +26,10 @@ var callbackFactory = {
             data: (message) ? message : 'There was a problem with one of your inputs.'
         }
     },
-    fail401: function(){
+    fail401: function(message){
         return {
             err: 401,
-            data: 'Unauthorized'
+            data: 'Unauthorized' || message
         }
     },
     fail403: function(message){
