@@ -439,3 +439,19 @@ definitions:
         type: boolean
       meta:
         type: object
+  logObject:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      data:
+        type: object
+  logRange:
+    properties:
+      greater:
+        type: string
+        default: mm/dd/yyyy
+      less:
+        type: string
+        default: mm/dd/yyyy
