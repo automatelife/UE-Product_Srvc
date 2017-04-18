@@ -13,7 +13,7 @@ var config = {
         url: 'https://auth.unitedeffects.com',
         owner: 'admin',
         private: true,
-        private_code: 'YOUR-PRIVATE-CODE-HERE',
+        private_code: (process.env.DEFAULT_PROD_CODE) ? (process.env.DEFAULT_PROD_CODE) : 'YOUR-PRIVATE-CODE-HERE',
         meta: {
             info: 'Auto created on startup'
         }
