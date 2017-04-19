@@ -9,10 +9,12 @@ var moment = require('moment');
 var productSchema = new mongoose.Schema({
     name: {
         type: String,
+        unique: true,
         required: true
     },
     slug: {
         type: String,
+        unique: true,
         required: true
     },
     url: {
