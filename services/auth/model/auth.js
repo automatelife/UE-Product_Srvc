@@ -14,7 +14,6 @@ var tokenSchema = new mongoose.Schema({
     },
     user_id: {
         type: String,
-        unique: true,
         required: true,
         index: true
     },

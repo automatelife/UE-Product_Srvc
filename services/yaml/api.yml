@@ -362,7 +362,7 @@ paths:
           required: true
         - name: update
           in: body
-          description: updates to send
+          description: updates to send. NOTE - If updating roles, array will be overwritten. Perform a GET first and append the array before patching.
           required: true
           schema:
             $ref: '#/definitions/productObjectPatch'
@@ -430,6 +430,11 @@ definitions:
         type: string
       owner:
         type: string
+      roles:
+        schema:
+          type: array
+          items:
+            type: string
       private:
         type: boolean
         default: false

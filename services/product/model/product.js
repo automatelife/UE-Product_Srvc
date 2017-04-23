@@ -25,6 +25,10 @@ var productSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    roles: {
+        type: Array,
+        default: ['admin']
+    },
     created: {
         type: Date,
         default: moment().format()
