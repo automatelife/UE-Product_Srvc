@@ -90,6 +90,7 @@ var eventFactory = {
                 return cb(null, output)
             })
             .catch(function(error){
+                console.log(error);
                 return cb(send.fail500(error), null);
             })
     },
@@ -100,7 +101,7 @@ var eventFactory = {
             })
             .each(function(event){
                 eventFactory.processEvent(event._id, function(err, result){
-                    if(err) log.error('Error processing event at '+moment(),format('MMMM Do YYYY, hh:mm:ss a'), {error: err, event: event});
+                    if(err) log.error('Error processing event at '+moment().format('MMMM Do YYYY, hh:mm:ss a'), {error: err, event: event});
                     console.log(err);
                 })
             })
