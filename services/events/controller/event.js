@@ -100,7 +100,8 @@ var eventFactory = {
             })
             .each(function(event){
                 eventFactory.processEvent(event._id, function(err, result){
-                    if(err) log.error('Error processing event '+event._id+' at '+moment(),format('MMMM Do YYYY, hh:mm:ss a'), err);
+                    if(err) log.error('Error processing event at '+moment(),format('MMMM Do YYYY, hh:mm:ss a'), {error: err, event: event});
+                    console.log(err);
                 })
             })
             .then(function(results){
