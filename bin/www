@@ -4,104 +4,106 @@
  * Module dependencies.
  */
 
-var app = require('../app');
-var debug = require('debug')('ue-product-srvc:server');
-var http = require('http');
-var mongoose = require('mongoose');
-mongoose.Promise = require('bluebird');
-var fs = require('fs');
-var config = require('../config');
-var conn = mongoose.connection;
-var Promise = require('bluebird');
-var product = Promise.promisifyAll(require('../services/product/controller/product'));
-var log = require('../services/log/controller/log');
-var im = require('is-master');
-var CronJob = require('node-cron');
-var event = Promise.promisifyAll(require('../services/events/controller/event'));
+require('babel-core/register');
+require('babel-polyfill');
 
-var mongoConnect = config.defaultMongo;
+const app = require('../app').default;
+const debug = require('debug')('ue-product-srvc:server');
+const http = require('http');
+
+const mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
+const config = require('../config');
+const conn = mongoose.connection;
+const Promiseb = require('bluebird');
+const product = Promiseb.promisifyAll(require('../services/product/controller/product').default);
+const log = require('../services/log/controller/log');
+const im = require('is-master');
+const CronJob = require('node-cron');
+const event = Promiseb.promisifyAll(require('../services/events/controller/event').default);
+
+let mongoConnect = config.defaultMongo;
+
 if(process.env.MONGO){
-    console.log("Setting connection string: "+process.env.MONGO);
-    mongoConnect = process.env.MONGO;
-}else console.log("Default connection string: "+mongoConnect);
+	console.info('Setting connection string: '+process.env.MONGO);
+	mongoConnect = process.env.MONGO;
+}else console.info('Default connection string: '+mongoConnect);
 
 var mongoOptions = {
-    server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } },
-    replset: {
-        rs_name: config.replica,
-        socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 }
-    },
-    auth:{authdb:"admin"}
+    keepAlive: 300000,
+    connectTimeoutMS: 30000,
+	replicaSet: config.replica,
+	useMongoClient: true
 };
 
 function connectionM(){
-    mongoose.connect(mongoConnect, mongoOptions, function(err){
-        if(err) {
-            console.log("********************************************ERROR*******************************************");
-            console.log("Unable to connect to the database - this service will not persist data");
-            console.log("DB attempted: " + mongoConnect);
-            console.log("Please check that the database is running and try again.");
-            console.log("DETAILED ERROR BELOW");
-            console.log(err);
-            console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ERROR^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-            setTimeout(function(){
-                connectionM();
-            },2000);
-        }
-    });
+	mongoose.connect(`${mongoConnect}?authSource=admin`, mongoOptions, function(err){
+		if(err) {
+			console.info('********************************************ERROR*******************************************');
+			console.info('Unable to connect to the database - this service will not persist data');
+			console.info('DB attempted: ' + mongoConnect);
+			console.info('Please check that the database is running and try again.');
+			console.info('DETAILED ERROR BELOW');
+			console.info(err);
+			console.info('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ERROR^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
+			setTimeout(function(){
+				connectionM();
+			},2000);
+		}
+	});
 }
 
 connectionM();
 im.start();
 //run this every 24 hours
 CronJob.schedule('0 */10 * * * *', function(){
-    //making sure this only runs on a single node of the license service cluster with is-master
-    if(im.master)job();
-    else{
-        //its possible that this node is the master but hasn't been updated b/c the original master went offline less than 2 minutes ago
-        setTimeout(function(){
-            if(im.master) job();
-        },200000);
-    }
+	//making sure this only runs on a single node of the license service cluster with is-master
+	if(im.master)job();
+	else{
+		//its possible that this node is the master but hasn't been updated b/c the original master went offline less than 2 minutes ago
+		setTimeout(function(){
+			if(im.master) job();
+		},200000);
+	}
 },true);
 
 function job(){
-    event.checkAndProcessAllIntentAsync()
-        .then(function(results){
-            //console.log('completed without issue');
-        })
-        .catch(function(error){
-            log.error('There was a problem processing unfinished events', error);
-        })
+	event.checkAndProcessAllIntentAsync()
+		.then(function(){
+			//console.info('completed without issue');
+		})
+		.catch(function(error){
+			log.error('There was a problem processing unfinished events', error);
+		});
 }
 
 /**
  * Create HTTP server.
  */
 conn.once('open', function () {
-    /**
+	/**
      * Listen on provided port, on all network interfaces.
      */
-    server.listen(port);
-    server.on('error', onError);
-    server.on('listening', onListening);
-    seedAuthProduct();
+	server.listen(port);
+	server.on('error', onError);
+	server.on('listening', onListening);
+	seedAuthProduct();
 });
 
-conn.on("connected", function(){
-    console.log('connected to ' + mongoConnect);
+conn.on('connected', function(){
+	console.info('connected to ' + mongoConnect);
 });
 
-conn.on("error", function(){
-    console.log("There was a connection error with Mongo.");
+conn.on('error', function(){
+	console.info('There was a connection error with Mongo.');
 });
 
 conn.on('disconnected', function(){
-    console.log('Mongo has disconnected.');
+	console.info('Mongo has disconnected.');
 });
 
 conn.on('reconnected', function(){
-    console.log('Mongo has reconnected.');
+	console.info('Mongo has reconnected.');
 });
 
 /**
@@ -115,46 +117,46 @@ var server = http.createServer(app);
  * Normalize a port into a number, string, or false.
  */
 function normalizePort(val) {
-    var port = parseInt(val, 10);
+	var port = parseInt(val, 10);
 
-    if (isNaN(port)) {
-        // named pipe
-        return val;
-    }
+	if (isNaN(port)) {
+		// named pipe
+		return val;
+	}
 
-    if (port >= 0) {
-        // port number
-        return port;
-    }
+	if (port >= 0) {
+		// port number
+		return port;
+	}
 
-    return false;
+	return false;
 }
 
 /**
  * Event listener for HTTP server "error" event.
  */
 function onError(error) {
-    if (error.syscall !== 'listen') {
-        throw error;
-    }
+	if (error.syscall !== 'listen') {
+		throw error;
+	}
 
-    var bind = typeof port === 'string'
-        ? 'Pipe ' + port
-        : 'Port ' + port;
+	var bind = typeof port === 'string'
+		? 'Pipe ' + port
+		: 'Port ' + port;
 
-    // handle specific listen errors with friendly messages
-    switch (error.code) {
-        case 'EACCES':
-            console.error(bind + ' requires elevated privileges');
-            process.exit(1);
-            break;
-        case 'EADDRINUSE':
-            console.error(bind + ' is already in use');
-            process.exit(1);
-            break;
-        default:
-            throw error;
-    }
+	// handle specific listen errors with friendly messages
+	switch (error.code) {
+	case 'EACCES':
+		console.error(bind + ' requires elevated privileges');
+		process.exit(1);
+		break;
+	case 'EADDRINUSE':
+		console.error(bind + ' is already in use');
+		process.exit(1);
+		break;
+	default:
+		throw error;
+	}
 }
 
 /**
@@ -162,50 +164,50 @@ function onError(error) {
  */
 
 function onListening() {
-    console.log('connected');
-    var addr = server.address();
-    var bind = typeof addr === 'string'
-        ? 'pipe ' + addr
-        : 'port ' + addr.port;
-    debug('Listening on ' + bind);
+	console.info('connected');
+	var addr = server.address();
+	var bind = typeof addr === 'string'
+		? 'pipe ' + addr
+		: 'port ' + addr.port;
+	debug('Listening on ' + bind);
 }
 
 function seedAuthProduct() {
-    product.returnProductSlugAsync(config.defaultProduct.slug, null)
-        .then(function(result){
-            if(!result){
-                log.notify('Seed product Default not present. Building.', null);
-                console.log('Seeding Default Product');
-                return product.postProductAsync(config.defaultProduct);
-            } else console.log('Default Product Verified: '+config.defaultProduct.name);
-            return false;
-        })
-        .then(function(output){
-            if(output){
-                console.log('Saved Default Product');
-                console.log(output)
-                log.notify('Saved Default Product', output);
-            }
-        })
-        .catch(function(error){
-            if(error.err===404){
-                log.notify('Seed product Default not present. Building.', null);
-                console.log('Seeding Default Product');
-                product.postProduct(config.defaultProduct, function(err, output){
-                    if(!err){
-                        console.log('Saved Default Product');
-                        console.log(output)
-                        log.notify('Saved Default Product', output);
-                    }else{
-                        log.error('There was a problem when checking for Default product', err);
-                        console.log('There was a problem checking for Default');
-                        console.log(err);
-                    }
-                });
-            }else{
-                log.error('There was a problem when checking for Default product', error);
-                console.log('There was a problem checking for Default');
-                console.log(error);
-            }
-        })
+	product.returnProductSlugAsync(config.defaultProduct.slug, null)
+		.then(function(result){
+			if(!result){
+				log.notify('Seed product Default not present. Building.', null);
+				console.info('Seeding Default Product');
+				return product.postProductAsync(config.defaultProduct);
+			} else console.info('Default Product Verified: '+config.defaultProduct.name);
+			return false;
+		})
+		.then(function(output){
+			if(output){
+				console.info('Saved Default Product');
+				console.info(output);
+				log.notify('Saved Default Product', output);
+			}
+		})
+		.catch(function(error){
+			if(error.err===404){
+				log.notify('Seed product Default not present. Building.', null);
+				console.info('Seeding Default Product');
+				product.postProduct(config.defaultProduct, function(err, output){
+					if(!err){
+						console.info('Saved Default Product');
+						console.info(output);
+						log.notify('Saved Default Product', output);
+					}else{
+						log.error('There was a problem when checking for Default product', err);
+						console.info('There was a problem checking for Default');
+						console.info(err);
+					}
+				});
+			}else{
+				log.error('There was a problem when checking for Default product', error);
+				console.info('There was a problem checking for Default');
+				console.info(error);
+			}
+		});
 }

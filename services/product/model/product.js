@@ -1,12 +1,13 @@
 /**
  * Created by borzou on 1/29/17.
  */
-var Promise = require('bluebird');
-var mongoose = Promise.promisifyAll(require('mongoose'));
-var moment = require('moment');
+import Promiseb from 'bluebird';
+
+const mongoose = Promiseb.promisifyAll(require('mongoose'));
+import moment from 'moment';
 
 // Define our user schema
-var productSchema = new mongoose.Schema({
+const productSchema = new mongoose.Schema({
     name: {
         type: String,
         unique: true,
@@ -52,9 +53,7 @@ var productSchema = new mongoose.Schema({
 });
 
 // Execute before each user.save() call
-productSchema.pre('save', function(callback) {
-    return callback();
-});
+productSchema.pre('save', callback => callback());
 
 // Export the Mongoose model
-module.exports = mongoose.model('Product', productSchema);
+export default mongoose.model('Product', productSchema);

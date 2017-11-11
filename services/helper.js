@@ -1,39 +1,44 @@
 /**
  * Created by borzou on 9/27/16.
  */
-var mongoose = require('mongoose');
+import mongoose from 'mongoose';
+
 mongoose.Promise = require('bluebird');
-var conn = mongoose.connection;
+const conn = mongoose.connection;
 
-var helpers = {
-    sendJson: function(res, output){
-        var status;
-        if(output.err==null)status=200;
-        else status=output.err;
-        if(output.message!=null)res.status(status).json({err: output.err, data: output.data, message: output.message});
-        else res.status(status).json({err: output.err, data: output.data});
-    },
-    sendUnauthorized: function(res){
-        res.status(401).send('Unauthorized');
-    },
-    mongoStatus: function(){
-        return {
-            config: conn.config,
-            replica: conn.replica,
-            name: conn.name,
-            options: conn.options,
-            readyState: conn._readyState,
-            opened: conn._hasOpened
-        }
-    },
-    isJson: function(check){
-        try {
-            var thisJSON = JSON.parse(check);
-            return true;
-        } catch(e) {
-            return false;
-        }
-    }
+export default {
+	sendJson(res, output) {
+		let status;
+		if (!output.code || output.code === null)status = 200;
+		else status = output.code;
+		const resp = {
+			code: output.code,
+			type: output.type,
+			data: output.data,
+			message: output.message
+		};
+		res.status(status).json(resp);
+	},
+	sendUnauthorized(res) {
+		res.status(401).send('Unauthorized');
+	},
+	mongoStatus() {
+		console.info('here');
+		return {
+			config: conn.config,
+			replica: conn.replica,
+			name: conn.name,
+			options: conn.options,
+			readyState: conn._readyState,
+			opened: conn._hasOpened
+		};
+	},
+	isJson(check) {
+		try {
+			JSON.parse(check);
+			return true;
+		} catch(e) {
+			return false;
+		}
+	}
 };
-
-module.exports = helpers;
