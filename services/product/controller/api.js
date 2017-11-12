@@ -63,7 +63,7 @@ export default {
 					output.push(product.prepareIntentAsync(event));
 				});
 
-				return Promise.all(output);
+				return Promiseb.all(output);
 			})
 			.then(results => {
 				if(!results) return send.fail500('Intent not written');
@@ -101,7 +101,7 @@ export default {
 					output.push(product.prepareIntentAsync(event));
 				});
 
-				return Promise.all(output);
+				return Promiseb.all(output);
 			})
 			.then(results => {
 				if(!results) return send.fail500('Intent not written');

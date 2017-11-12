@@ -6,7 +6,6 @@ import Promiseb from 'bluebird';
 
 const Intent = Promiseb.promisifyAll(require('../model/intent').default);
 import request from 'request';
-//const request = Promiseb.promisify(require('request'));
 import send from '../../callback';
 import log from '../../log/controller/log';
 import moment from 'moment';
@@ -54,14 +53,14 @@ const eventFactory = {
 				return request(event.request);
 			})
 			.then(response => {
-				if(response.statusCode!=200) return cb('Unable to complete event', null);
+				if(response.statusCode!==200) return cb('Unable to complete event', null);
 				respAck = response.body;
-				const completeThis = Promise.promisify(eventFactory.markProcessed);
+				const completeThis = Promiseb.promisify(eventFactory.markProcessed);
 				return completeThis(id);
 			})
 			.then(completed => {
 				if(!completed) return cb('Unable to mark this event complete. It may be repeated.', null);
-				const record = Promise.promisify(eventFactory.recordAck);
+				const record = Promiseb.promisify(eventFactory.recordAck);
 				return record(id, respAck);
 			})
 			.then(output => cb(null, output))
