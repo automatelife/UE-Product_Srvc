@@ -2,128 +2,111 @@
  * Created by borzou on 10/23/16.
  */
 
-var Promise = require('bluebird');
-var Log = Promise.promisifyAll(require('../model/log'));
-var send = require('../../callback');
+import Promiseb from 'bluebird';
 
-var logFactory = {
-    enterLog: function(options, cb){
-        var log = new Log({
-            message: options.message,
-            code: options.code,
-            data: options.data
-        });
+const Log = Promiseb.promisifyAll(require('../model/log').default);
+import send from '../../callback';
 
-        log.saveAsync()
-            .then(function(saved){return cb(null, send.successSaved(saved));})
-            .catch(function (err) {return cb(send.failErr(err), null);});
+export default {
+	enterLog(options, cb) {
+		const log = new Log({
+			message: options.message,
+			code: options.code,
+			data: options.data
+		});
 
-    },
-    asyncEnterLog: function(message, code, data){
-        var log = new Log({
-            message: message,
-            code: code,
-            data: data
-        });
+		log.saveAsync()
+			.then(saved => cb(null, send.successSaved(saved)))
+			.catch(err => cb(send.failErr(err), null));
 
-        log.saveAsync()
-            .then(function(saved){
-                //return cb(null, send.successSaved(saved));
-            })
-            .catch(function (err) {
-                console.log(err);
-                //return cb(send.failErr(err), null);
-            });
-    },
-    simpleLog: function(data){
-        //will phase this out...
-        var log = new Log({
-            message: data,
-            code: 'NOTIFICATION'
-        });
+	},
+	asyncEnterLog(message, code, data) {
+		const log = new Log({
+			message,
+			code,
+			data
+		});
 
-        log.save(function(err){
-            if(err) console.log(err);
-        });
-    },
-    notify: function(message, data){
-        var log = new Log({
-            message: message,
-            code: 'NOTIFICATION',
-            data: data
-        });
-        log.save(function(err){
-            if(err) console.log(err);
-        });
-    },
-    error: function(message, data){
-        var log = new Log({
-            message: message,
-            code: 'ERROR',
-            data: data
-        });
-        log.save(function(err){
-            if(err) console.log(err);
-        });
-    },
-    success: function(message, data){
-        var log = new Log({
-            message: message,
-            code: 'SUCCESS',
-            data: data
-        });
-        log.save(function(err){
-            if(err) console.log(err);
-        });
-    },
-    unexpected: function(message, data){
-        var log = new Log({
-            message: message,
-            code: 'UNEXPECTED',
-            data: data
-        });
-        log.save(function(err){
-            if(err) console.log(err);
-        });
-    },
-    getLogs: function(cb){
-        Log.find({}).sort({created: -1}).limit(600)
-            .then(function(logs){
-                return cb(null, send.success(logs));
-            })
-            .catch(function(err){
-                return cb(send.failErr(err), null);
-            });
-    },
-    getLogsRange: function(options, cb){
-        var greater = new Date(options.greater);
-        var less = new Date(options.less);
-        Log.find({"created": {"$gte": greater, "$lte": less}}).sort('-created')
-            .then(function(logs){
-                return cb(null, send.success(logs));
-            })
-            .catch(function(err){
-                return cb(send.failErr(err), null);
-            });
-    },
-    getCode: function(code, cb){
-        Log.find({code: code}).sort({created: -1})
-            .then(function(logs){
-                return cb(null, send.success(logs));
-            })
-            .catch(function(err){
-                return cb(send.failErr(err), null);
-            });
-    },
-    search: function(q, cb){
-        Log.searchAsync(q, {code: 1, message: 1, data: 1}, {conditions: {code: {$exists: true}}, sort: {created: -1}, limit: 60})
-            .then(function(result){
-                return cb(null, send.success(result));
-            })
-            .catch(function(error){
-                return cb(send.failErr(error), null);
-            })
-    }
+		log.saveAsync()
+			.then(() => {
+				//return cb(null, send.successSaved(saved));
+			})
+			.catch(err => {
+				console.info(err);
+				//return cb(send.failErr(err), null);
+			});
+	},
+	simpleLog(data) {
+		//will phase this out...
+		const log = new Log({
+			message: data,
+			code: 'NOTIFICATION'
+		});
+
+		log.save(err => {
+			if(err) console.info(err);
+		});
+	},
+	notify(message, data) {
+		const log = new Log({
+			message,
+			code: 'NOTIFICATION',
+			data
+		});
+		log.save(err => {
+			if(err) console.info(err);
+		});
+	},
+	error(message, data) {
+		const log = new Log({
+			message,
+			code: 'ERROR',
+			data
+		});
+		log.save(err => {
+			if(err) console.info(err);
+		});
+	},
+	success(message, data) {
+		const log = new Log({
+			message,
+			code: 'SUCCESS',
+			data
+		});
+		log.save(err => {
+			if(err) console.info(err);
+		});
+	},
+	unexpected(message, data) {
+		const log = new Log({
+			message,
+			code: 'UNEXPECTED',
+			data
+		});
+		log.save(err => {
+			if(err) console.info(err);
+		});
+	},
+	getLogs(cb) {
+		Log.find({}).sort({created: -1}).limit(600)
+			.then(logs => cb(null, send.success(logs)))
+			.catch(err => cb(send.failErr(err), null));
+	},
+	getLogsRange(options, cb) {
+		const greater = new Date(options.greater);
+		const less = new Date(options.less);
+		Log.find({'created': {'$gte': greater, '$lte': less}}).sort('-created')
+			.then(logs => cb(null, send.success(logs)))
+			.catch(err => cb(send.failErr(err), null));
+	},
+	getCode(code, cb) {
+		Log.find({code}).sort({created: -1})
+			.then(logs => cb(null, send.success(logs)))
+			.catch(err => cb(send.failErr(err), null));
+	},
+	search(q, cb) {
+		Log.searchAsync(q, {code: 1, message: 1, data: 1}, {conditions: {code: {$exists: true}}, sort: {created: -1}, limit: 60})
+			.then(result => cb(null, send.success(result)))
+			.catch(error => cb(send.failErr(error), null));
+	}
 };
-
-module.exports = logFactory;

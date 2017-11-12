@@ -2,12 +2,13 @@
  * Created by borzou on 10/23/16.
  */
 
-var Promise = require('bluebird');
-var mongoose = Promise.promisifyAll(require('mongoose'));
-var moment = require('moment');
+import Promiseb from 'bluebird';
+
+const mongoose = Promiseb.promisifyAll(require('mongoose'));
+import moment from 'moment';
 
 // Define our user schema
-var locSchema = new mongoose.Schema({
+const locSchema = new mongoose.Schema({
     created: {
         type: Date,
         default: moment().format(),
@@ -28,10 +29,8 @@ var locSchema = new mongoose.Schema({
 });
 
 // Execute before each user.save() call
-locSchema.pre('save', function(callback) {
-    //console.log('log saved');
-    return callback();
-});
+locSchema.pre('save', callback => //console.log('log saved');
+    callback());
 
 // Export the Mongoose model
-module.exports = mongoose.model('Log', locSchema);
+export default mongoose.model('Log', locSchema);

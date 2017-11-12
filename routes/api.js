@@ -1,13 +1,12 @@
-var express = require('express');
-var product = require('../services/product/controller/api');
-var authApi = require('../services/auth/controller/api');
-var helper = require('../services/helper');
-var config = require('../config');
-var logApi = require('../services/log/controller/api');
-var router = express.Router();
+import express from 'express';
+import product from '../services/product/controller/api';
+import authApi from '../services/auth/controller/api';
+import helper from '../services/helper';
+import logApi from '../services/log/controller/api';
+const router = express.Router();
 
 /* GET api listing. */
-router.get('/', function(req, res, next) {
+router.get('/', (req, res, next) => {
     res.json( {
         err: null,
         message: {
@@ -36,10 +35,8 @@ router.get('/logs', authApi.isBearerAuthenticated, logApi.returnLogs);
 router.post('/logs/range', authApi.isBearerAuthenticated, logApi.returnRange);
 router.get('/logs/:code', authApi.isBearerAuthenticated, logApi.returnByCode);
 router.get('/log/search', authApi.isBearerAuthenticated, logApi.search);
-router.get('/health', authApi.isBearerAuthenticated, function(req, res){
+router.get('/health', authApi.isBearerAuthenticated, (req, res) => {
     res.json({err: null, data: {server: 'running', mongo: helper.mongoStatus()}});
 });
 
-
-
-module.exports = router;
+export default router;
