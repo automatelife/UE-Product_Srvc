@@ -379,6 +379,70 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/defaultError'
+  /product/{slug}/user/{id}/transfer:
+    post:
+      tags:
+        - Product Management
+      summary: Transfer a Product by slug to a new owner through their user ID
+      description: Transfer a Product by slug to a new owner through their user ID. Super Admin and Product Owner only.
+      produces:
+        - application/json
+      parameters:
+        - name: slug
+          in: path
+          description: slug of the product (id should also work)
+          type: string
+          required: true
+        - name: id
+          in: path
+          description: id of the user to take ownership
+          type: string
+          required: true
+      responses:
+        200:
+          description: GET successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
+  /product/{slug}/transfer/{code}:
+    post:
+      tags:
+        - Product Management
+      summary: Transfer a Product by slug to yourself using the transfer code.
+      description: Transfer a Product by slug to yourself using the transfer code. Only works with logged in users.
+      produces:
+        - application/json
+      parameters:
+        - name: slug
+          in: path
+          description: slug of the product (id should also work)
+          type: string
+          required: true
+        - name: code
+          in: path
+          description: code to validate your transfer
+          type: string
+          required: true
+      responses:
+        200:
+          description: GET successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
 definitions:
   success:
     required:

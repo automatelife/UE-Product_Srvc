@@ -10,6 +10,7 @@ import config from '../../../config';
 const Intent = Promiseb.promisifyAll(require('../../events/controller/event').default);
 import log from '../../log/controller/log';
 import readyEvents from '../../../events';
+import transfer from './transfer';
 
 export default {
 	getProducts(req, res) {
@@ -90,6 +91,7 @@ export default {
 				return respond.sendJson(res, error);
 			});
 	},
+
 	deleteProduct(req, res) {
 		if(req.user.role!==1) return respond.sendUnauthorized(res);
 		let sendOut = {};
@@ -128,5 +130,28 @@ export default {
 				});
 				return respond.sendJson(res, error);
 			});
+	},
+
+    createTransferCode(req, res) {
+		const options = {
+			id: req.params.id,
+			slug: req.params.slug
+		};
+
+		transfer.createTransferCode(options)
+            .then(output => respond.sendJson(res, output))
+            .catch(error => respond.sendJson(res, error));
+	},
+
+    takeOwnership(req, res) {
+		const options = {
+			me: req.user.id,
+			slug: req.params.slug,
+			code: req.params.code
+		};
+
+		transfer.takeOwnership(options)
+            .then(output => respond.sendJson(res, output))
+            .catch(error => respond.sendJson(res, error));
 	}
 };
