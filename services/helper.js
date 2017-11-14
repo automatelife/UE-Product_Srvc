@@ -23,7 +23,6 @@ export default {
 		res.status(401).send('Unauthorized');
 	},
 	mongoStatus() {
-		console.info('here');
 		return {
 			config: conn.config,
 			replica: conn.replica,

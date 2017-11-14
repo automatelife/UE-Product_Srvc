@@ -8,7 +8,8 @@ import {BasicStrategy} from 'passport-http';
 import {Strategy as BearerStrategy} from 'passport-http-bearer';
 const Token = Promiseb.promisifyAll(require('../model/auth').default);
 import moment from 'moment';
-import request from 'request';
+import rq from 'request';
+const request = Promiseb.promisify(rq);
 
 /*
 const request = Promiseb.promisify(require('request'));
@@ -59,7 +60,6 @@ passport.use('basic', new BasicStrategy({
 
 passport.use('bearer', new BearerStrategy(
 	(accessToken, callback) => {
-		console.info('here');
 		try {
 			if (!accessToken) return callback(null, false);
 			const fullToken = Buffer.from(accessToken.replace(/%3D/g, '='), 'base64').toString('ascii');
