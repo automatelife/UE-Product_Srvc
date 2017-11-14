@@ -1,11 +1,11 @@
 import Transfer from '../model/transfer';
 
 function uid (len) {
-    var buf = []
+    let buf = []
         , chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
         , charlen = chars.length;
 
-    for (var i = 0; i < len; ++i) {
+    for (let i = 0; i < len; ++i) {
         buf.push(chars[getRandomInt(0, charlen - 1)]);
     }
 
