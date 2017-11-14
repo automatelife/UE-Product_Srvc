@@ -8,7 +8,7 @@ import {BasicStrategy} from 'passport-http';
 import {Strategy as BearerStrategy} from 'passport-http-bearer';
 const Token = Promiseb.promisifyAll(require('../model/auth').default);
 import moment from 'moment';
-import request from 'request';
+import request from 'request-promise-native';
 
 /*
 const request = Promiseb.promisify(require('request'));

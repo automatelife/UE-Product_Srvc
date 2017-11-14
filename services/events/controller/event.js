@@ -5,7 +5,7 @@
 import Promiseb from 'bluebird';
 
 const Intent = Promiseb.promisifyAll(require('../model/intent').default);
-import request from 'request';
+import request from 'request-promise-native';
 import send from '../../callback';
 import log from '../../log/controller/log';
 import moment from 'moment';
