@@ -22,10 +22,12 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    // this may need to be depreciated in favor of creator
     owner: {
         type: String,
         required: true
     },
+    // this may not be needed and could be depreciated
     roles: {
         type: Array,
         default: ['admin']

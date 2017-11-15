@@ -9,10 +9,9 @@ const transferSchema = new mongoose.Schema({
         unique: true,
         required: true
     },
-    user_id:{
+    original: {
         type: String,
-        required: true,
-        index: true
+        required: true
     },
     product:{
         type: String,
@@ -22,31 +21,31 @@ const transferSchema = new mongoose.Schema({
     created: {
         type: Date,
         default: Date.now,
-        expires: '1d'
+        expires: '12h'
     }
 });
 
 // Execute before each user.save() call
-transferSchema.pre('save', callback => {
-    const gcode = this;
+transferSchema.pre('save', function(callback) {
+    const transfer = this;
 
     // Break out if the password hasn't changed
-    if (!gcode.isModified('code')) return callback();
+    if (!transfer.isModified('code')) return callback();
 
     // Password changed so we need to hash it
     bcrypt.genSalt(5, (err, salt) => {
         if (err) return callback(err);
 
-        bcrypt.hash(gcode.code, salt, null, (err, hash) => {
+        bcrypt.hash(transfer.code, salt, null, (err, hash) => {
             if (err) return callback(err);
-            gcode.code = hash;
+            transfer.code = hash;
             callback();
         });
     });
 });
 
-transferSchema.methods.verifyCode = (code, callback) => {
-    bcrypt.compare(code, this.code, function(err, isMatch) {
+transferSchema.methods.verifyCode = function(code, callback) {
+    bcrypt.compare(code, this.code, (err, isMatch) => {
         if (err) return callback(err);
         callback(null, isMatch);
     });

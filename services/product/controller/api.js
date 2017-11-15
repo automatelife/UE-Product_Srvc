@@ -93,7 +93,7 @@ export default {
 	},
 
 	deleteProduct(req, res) {
-		if(req.user.role!==1) return respond.sendUnauthorized(res);
+		if (req.user.role!==1) return respond.sendUnauthorized(res);
 		let sendOut = {};
 		let eventRec = [];
 		product.returnProductAsync(req.params.id)
@@ -131,11 +131,13 @@ export default {
 				return respond.sendJson(res, error);
 			});
 	},
-
+	//move both the below to userauth...
     createTransferCode(req, res) {
+		console.info(JSON.stringify(req.user, null, 2));
 		const options = {
-			id: req.params.id,
-			slug: req.params.slug
+			slug: req.params.slug,
+			user: req.user._id,
+			role: req.user.role
 		};
 
 		transfer.createTransferCode(options)

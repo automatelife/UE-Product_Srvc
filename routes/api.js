@@ -27,8 +27,8 @@ router.get('/product/:id', authApi.isBearerAuthenticated, product.returnProduct)
 router.patch('/product/:id', authApi.isBearerAuthenticated, product.findOneAndUpdate);
 router.delete('/product/:id', authApi.isBearerAuthenticated, product.deleteProduct);
 
-//transfers
-router.post('/product/:slug/user/:id/transfer', authApi.isBearerAuthenticated, product.createTransferCode); // super admin and owner only
+//transfers - move this to userauth
+router.post('/product/:slug/transfer', authApi.isBearerAuthenticated, product.createTransferCode); // super admin and owner only
 router.post('/product/:slug/transfer/:code', authApi.isBearerAuthenticated, product.takeOwnership); //any registered user
 
 

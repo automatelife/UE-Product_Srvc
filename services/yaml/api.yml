@@ -379,23 +379,18 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/defaultError'
-  /product/{slug}/user/{id}/transfer:
+  /product/{slug}/transfer:
     post:
       tags:
         - Product Management
-      summary: Transfer a Product by slug to a new owner through their user ID
-      description: Transfer a Product by slug to a new owner through their user ID. Super Admin and Product Owner only.
+      summary: Transfer a Product by slug to a new owner
+      description: Transfer a Product by slug to a new owner. Super Admin and Product Owner only.
       produces:
         - application/json
       parameters:
         - name: slug
           in: path
-          description: slug of the product (id should also work)
-          type: string
-          required: true
-        - name: id
-          in: path
-          description: id of the user to take ownership
+          description: slug of the product
           type: string
           required: true
       responses:
