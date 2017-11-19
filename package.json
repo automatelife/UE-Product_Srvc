@@ -1,6 +1,6 @@
 {
   "name": "ue-product-srvc",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "A microservice to register products to the UE-Auth identity and license management system.",
   "private": true,
   "scripts": {
@@ -51,7 +51,7 @@
     "debug": "^2.2.0",
     "express": "^4.16.2",
     "is-master": "^1.2.2",
-    "moment": "^2.11.1",
+    "moment": "^2.19.2",
     "mongoose": "^4.6.0",
     "morgan": "^1.6.1",
     "node-cron": "^1.1.3",

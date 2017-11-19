@@ -26,11 +26,7 @@ router.get('/product/hooked/:slug', product.returnProductSlugHook);
 router.get('/product/:id', authApi.isBearerAuthenticated, product.returnProduct);
 router.patch('/product/:id', authApi.isBearerAuthenticated, product.findOneAndUpdate);
 router.delete('/product/:id', authApi.isBearerAuthenticated, product.deleteProduct);
-
-//transfers
-router.post('/product/:slug/user/:id/transfer', authApi.isBearerAuthenticated, product.createTransferCode); // super admin and owner only
-router.post('/product/:slug/transfer/:code', authApi.isBearerAuthenticated, product.takeOwnership); //any registered user
-
+router.patch('/product/:id/firstuser/:option', authApi.isBearerAuthenticated, product.changeFirstUserUpdate); //Super admin only
 
 //logs
 router.get('/log/definitions', authApi.isBearerAuthenticated, logApi.logDefinitions);

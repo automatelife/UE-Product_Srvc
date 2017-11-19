@@ -379,25 +379,26 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/defaultError'
-  /product/{slug}/user/{id}/transfer:
-    post:
+  /product/{id}/firstuser/{option}:
+    patch:
       tags:
         - Product Management
-      summary: Transfer a Product by slug to a new owner through their user ID
-      description: Transfer a Product by slug to a new owner through their user ID. Super Admin and Product Owner only.
+      summary: Update a Product by ID to enable or disable the first user override (recommend you disable)
+      description: Update a Product by ID to enable or disable the first user override (recommend you disable)
       produces:
         - application/json
       parameters:
-        - name: slug
-          in: path
-          description: slug of the product (id should also work)
-          type: string
-          required: true
         - name: id
           in: path
-          description: id of the user to take ownership
+          description: id of the product to override
           type: string
           required: true
+        - name: option
+          in: path
+          description: true or false to enable or disable first user override (recommend false)
+          type: boolean
+          required: true
+          default: false
       responses:
         200:
           description: GET successful
@@ -411,38 +412,7 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/defaultError'
-  /product/{slug}/transfer/{code}:
-    post:
-      tags:
-        - Product Management
-      summary: Transfer a Product by slug to yourself using the transfer code.
-      description: Transfer a Product by slug to yourself using the transfer code. Only works with logged in users.
-      produces:
-        - application/json
-      parameters:
-        - name: slug
-          in: path
-          description: slug of the product (id should also work)
-          type: string
-          required: true
-        - name: code
-          in: path
-          description: code to validate your transfer
-          type: string
-          required: true
-      responses:
-        200:
-          description: GET successful
-          schema:
-            $ref: '#/definitions/success'
-        401:
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/defaultError'
-        500:
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/defaultError'
+
 definitions:
   success:
     required:
@@ -492,7 +462,7 @@ definitions:
         type: string
       url:
         type: string
-      owner:
+      creator:
         type: string
       roles:
         schema:

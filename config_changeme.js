@@ -13,7 +13,8 @@ const config = {
         url: 'https://auth.unitedeffects.com',
         owner: 'admin',
         private: true,
-        private_code: process.env.DEFAULT_PROD_CODE || 'YOUR-PRIVATE-CODE-HERE',
+        enable_first_user: true,
+        private_code: process.env.DEFAULT_PROD_CODE || 'YOUR-PRIVATE-CODE-HERE', //Never display this anywhere and make sure you disable 'enable_first_user' later
         meta: {
             info: 'Auto created on startup'
         }

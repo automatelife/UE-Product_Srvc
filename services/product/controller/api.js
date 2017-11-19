@@ -10,7 +10,6 @@ import config from '../../../config';
 const Intent = Promiseb.promisifyAll(require('../../events/controller/event').default);
 import log from '../../log/controller/log';
 import readyEvents from '../../../events';
-import transfer from './transfer';
 
 export default {
 	getProducts(req, res) {
@@ -24,7 +23,8 @@ export default {
 		if(req.user.role!==1) respond.sendUnauthorized(res);
 		if(!req.body.name) respond.sendJson(res, send.fail417('Name is a required input'));
 		if(!req.body.slug) req.body['slug'] = req.body.name.trim().toLowerCase().replace(/ /g, '_').replace(/\./g, '').replace(/!/g, '').replace(/\?/g, '').replace(/{/g, '').replace(/}/g, '');
-		req.body['owner'] = req.user._id;
+		if (req.body.enable_first_user) delete req.body.enable_first_user;
+		req.body['creator'] = req.user._id;
 		product.postProductAsync(req.body)
 			.then(output => respond.sendJson(res, output))
 			.catch(error => //if(error.stack) console.log(error.stack);
@@ -56,6 +56,7 @@ export default {
 		let sendOut = {};
 		let eventRec = [];
 		if(req.body['_id']) delete req.body._id;
+        if (req.body.enable_first_user) delete req.body.enable_first_user;
 		product.returnProductAsync(req.params.id)
 			.then(prod => {
 				if(!req.body.name && !req.body.slug && typeof req.body.active === 'undefined') return 'SAFE';
@@ -91,9 +92,19 @@ export default {
 				return respond.sendJson(res, error);
 			});
 	},
-
+	changeFirstUserUpdate(req, res) {
+		if (req.user.role !== 1) return respond.sendUnauthorized(res);
+		const options = {
+			id: req.params.id,
+			set: (req.params.option === 'true')
+        };
+		product.changeFirstUserUpdate(options)
+            .then(output => respond.sendJson(res, output))
+            .catch(error => //if(error.stack) console.log(error.stack);
+                respond.sendJson(res, error));
+	},
 	deleteProduct(req, res) {
-		if(req.user.role!==1) return respond.sendUnauthorized(res);
+		if (req.user.role!==1) return respond.sendUnauthorized(res);
 		let sendOut = {};
 		let eventRec = [];
 		product.returnProductAsync(req.params.id)
@@ -130,28 +141,5 @@ export default {
 				});
 				return respond.sendJson(res, error);
 			});
-	},
-
-    createTransferCode(req, res) {
-		const options = {
-			id: req.params.id,
-			slug: req.params.slug
-		};
-
-		transfer.createTransferCode(options)
-            .then(output => respond.sendJson(res, output))
-            .catch(error => respond.sendJson(res, error));
-	},
-
-    takeOwnership(req, res) {
-		const options = {
-			me: req.user.id,
-			slug: req.params.slug,
-			code: req.params.code
-		};
-
-		transfer.takeOwnership(options)
-            .then(output => respond.sendJson(res, output))
-            .catch(error => respond.sendJson(res, error));
 	}
 };

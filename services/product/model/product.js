@@ -22,7 +22,12 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    // owner is depreciated and should be deleted in next version
     owner: {
+        type: String,
+        required: false
+    },
+    creator: {
         type: String,
         required: true
     },
@@ -34,13 +39,20 @@ const productSchema = new mongoose.Schema({
         type: Date,
         default: moment().format()
     },
+    // if set to true, we require the private_code below (with enable_first_user == true) or an invite (userauth managed) to register
     private: {
         type: Boolean,
         default: false
     },
+    // this is an override to allow first user access. a 512 char key is auto generated to protect the funcitonality if one isn't provided
     private_code: {
         type: String,
         required: false
+    },
+    // this enables or disables the override. It should be disabled as soon as first user is enabled.
+    enable_first_user: {
+        type: Boolean,
+        default: false
     },
     active: {
         type: Boolean,
