@@ -19,7 +19,10 @@ export default {
 		const product = new Product(options);
 
 		product.save()
-			.then(saved => cb(null, send.success(saved)))
+			.then((saved) => {
+                if(!options.private_code) delete saved.privcate_code;
+				return cb(null, send.success(saved))
+            })
 			.catch(err => cb(send.failErr(err), null));
 	},
 	returnProductSlug(slug, active, cb) {
