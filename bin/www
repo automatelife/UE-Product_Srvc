@@ -32,9 +32,10 @@ if(process.env.MONGO){
 var mongoOptions = {
     keepAlive: 300000,
     connectTimeoutMS: 30000,
-	replicaSet: config.replica,
 	useMongoClient: true
 };
+
+if(process.env.NODE_ENV='production') mongoOptions.replicaSet = config.replica;
 
 function connectionM(){
 	mongoose.connect(`${mongoConnect}?authSource=admin`, mongoOptions, function(err){
