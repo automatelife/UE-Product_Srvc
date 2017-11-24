@@ -35,7 +35,7 @@ var mongoOptions = {
 	useMongoClient: true
 };
 
-if(process.env.NODE_ENV='production') mongoOptions.replicaSet = config.replica;
+if(process.env.NODE_ENV==='production') mongoOptions.replicaSet = config.replica;
 
 function connectionM(){
 	mongoose.connect(`${mongoConnect}?authSource=admin`, mongoOptions, function(err){
