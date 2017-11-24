@@ -27,7 +27,7 @@ app.set('view engine', 'pug');
 
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 let swagSchema = 'http';
-if(process.env.NODE_ENV==='production'){
+if(process.env.NODE_ENV==='production' || process.env.NODE_ENV==='QA'){
 	app.use(logger('tiny'));
 	swagSchema = 'https';
 }
