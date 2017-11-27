@@ -49,6 +49,11 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: false
     },
+    // if this is true, only admins can generate licenses
+    license_lock: {
+        type: Boolean,
+        default: true
+    },
     // this enables or disables the override. It should be disabled as soon as first user is enabled.
     enable_first_user: {
         type: Boolean,

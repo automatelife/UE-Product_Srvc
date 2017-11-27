@@ -37,7 +37,14 @@ export default {
 			.catch(error => respond.sendJson(res, error));
 	},
 	returnProductSlug(req, res, next) {
-		if(req.user.role!==1) return respond.sendUnauthorized(res);
+		let authorized = false;
+        if (req.user.role === 1) authorized = true;
+        if (req.user.permissions) {
+            if(req.user.permissions.product) if(req.user.permissions.product[req.params.slug]) {
+                if(req.user.permissions.product[req.params.slug].admin) authorized = true;
+            }
+        }
+        if (!authorized) return respond.sendUnauthorized(res);
 		product.returnProductSlugAsync(req.params.slug, req.query.active)
 			.then(output => respond.sendJson(res, output))
 			.catch(error => {
@@ -46,19 +53,36 @@ export default {
 			});
 	},
 	returnProduct(req, res) {
-		if(req.user.role!==1) return respond.sendUnauthorized(res);
 		product.returnProductAsync(req.params.id)
-			.then(output => respond.sendJson(res, output))
+			.then((output) => {
+                let authorized = false;
+                if (req.user.role === 1) authorized = true;
+                if (req.user.permissions) {
+                    if(req.user.permissions.product) if(req.user.permissions.product[output.data.slug]) {
+                        if(req.user.permissions.product[output.data.slug].admin) authorized = true;
+                    }
+                }
+                if (!authorized) return respond.sendUnauthorized(res);
+				return respond.sendJson(res, output)
+            })
 			.catch(error => respond.sendJson(res, error));
 	},
 	findOneAndUpdate(req, res) {
-		if(req.user.role!==1) return respond.sendUnauthorized(res);
 		let sendOut = {};
 		let eventRec = [];
 		if(req.body['_id']) delete req.body._id;
         if (req.body.enable_first_user) delete req.body.enable_first_user;
 		product.returnProductAsync(req.params.id)
-			.then(prod => {
+			.then((prod) => {
+                let authorized = false;
+                if (req.user.role === 1) authorized = true;
+                if (req.user.permissions) {
+                    if(req.user.permissions.product) if(req.user.permissions.product[prod.data.slug]) {
+                        if(req.user.permissions.product[prod.data.slug].admin) authorized = true;
+                    }
+                }
+                if (!authorized) return 'unauthorized';
+
 				if(!req.body.name && !req.body.slug && typeof req.body.active === 'undefined') return 'SAFE';
 				const output = [];
 				readyEvents.productUpdates(req.body, prod.data).forEach(event => {
@@ -68,6 +92,7 @@ export default {
 				return Promiseb.all(output);
 			})
 			.then(results => {
+				if(results === 'unauthorized') return send.fail401();
 				if(!results) return send.fail500('Intent not written');
 				if(results.length !== readyEvents.productUpdatesCount() && results!=='SAFE') return send.fail500('All events were not saved, aborting update');
 				if(results!=='SAFE') eventRec = results;
@@ -104,11 +129,19 @@ export default {
                 respond.sendJson(res, error));
 	},
 	deleteProduct(req, res) {
-		if (req.user.role!==1) return respond.sendUnauthorized(res);
 		let sendOut = {};
 		let eventRec = [];
 		product.returnProductAsync(req.params.id)
 			.then(prod => {
+                let authorized = false;
+                if (req.user.role === 1) authorized = true;
+                if (req.user.permissions) {
+                    if(req.user.permissions.product) if(req.user.permissions.product[prod.data.slug]) {
+                        if(req.user.permissions.product[prod.data.slug].admin) authorized = true;
+                    }
+                }
+                if (!authorized) return 'unauthorized';
+
 				const output = [];
 				readyEvents.productUpdates({active: false}, prod.data).forEach(event => {
 					output.push(product.prepareIntentAsync(event));
@@ -117,6 +150,7 @@ export default {
 				return Promiseb.all(output);
 			})
 			.then(results => {
+				if(results === 'unauthorized') return send.fail401();
 				if(!results) return send.fail500('Intent not written');
 				if(results.length !== readyEvents.productUpdatesCount()) return send.fail500('All events were not saved, aborting update');
 				eventRec = results;

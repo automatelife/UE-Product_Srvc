@@ -450,6 +450,10 @@ definitions:
       private_code:
         type: string
         description: Only for use when private = true
+      license_lock:
+        type: boolean
+        default: true
+        description: If this is true, only admins can generate new licenses/domains
       active:
         type: boolean
       meta:
