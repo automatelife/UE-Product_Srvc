@@ -6,7 +6,11 @@ const config = {
     swaggerDomain: process.env.SWAG_DOM || 'localhost:4030',
     userApiServer: process.env.USERAUTH || 'http://localhost:4000',
     authApiServer: process.env.DOMAIN || 'http://localhost:4010',
+    replica: process.env.REPLICA || 'rs0',
     webhook: process.env.WEBHOOK || 'YOUR-SECRET-HERE',
+    protocol: process.env.PROTOCOL || 'http',
+    defaultLogoPath: process.env.DEFAULTLOGO || '/img/default.png',
+    licenseApiServer: process.env.LICENSE || 'http://localhost:4020',
     defaultProduct: {
         name: 'United Effects Auth',
         slug: 'united_effects_auth',
@@ -20,5 +24,7 @@ const config = {
         }
     }
 };
+
+config.defaultLogo = `${config.protocol}://${config.swaggerDomain}${config.defaultLogoPath}`;
 
 module.exports = config;

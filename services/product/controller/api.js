@@ -19,6 +19,12 @@ export default {
 			.catch(error => //if(error.stack) console.log(error.stack);
 				respond.sendJson(res, error));
 	},
+    getPublicProducts(req, res) {
+        product.getPublicProducts()
+            .then(output => respond.sendJson(res, output))
+            .catch(error => //if(error.stack) console.log(error.stack);
+                respond.sendJson(res, error));
+	},
 	postProduct(req, res) {
 		if(req.user.role!==1) respond.sendUnauthorized(res);
 		if(!req.body.name) respond.sendJson(res, send.fail417('Name is a required input'));

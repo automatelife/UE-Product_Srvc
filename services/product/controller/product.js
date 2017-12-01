@@ -75,6 +75,29 @@ export default {
 				return cb(null, event);
 			})
 			.catch(error => cb(send.failErr(error), null));
+	},
+    getPublicProducts() {
+		return new Promise((resolve, reject) => {
+            Product.findAsync({})
+                .then((results) => {
+            		let output = [];
+            		results.forEach((prod) => {
+            			const temp = {
+            				name: prod.name,
+							slug: prod.slug,
+							logo: prod.logo,
+							url: prod.url,
+							private: prod.private,
+							license_lock: prod.license_lock
+						};
+            			output.push(temp);
+					});
+
+            		return Promise.all(output);
+                })
+				.then(completed => resolve(send.success(completed)))
+                .catch(err => reject(send.failErr(err)));
+		})
 	}
 };
 

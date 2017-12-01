@@ -230,6 +230,27 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/defaultError'
+  /public/products:
+   get:
+      tags:
+        - Publicly Available
+      summary: Get All products
+      description: Get All products
+      produces:
+        - application/json
+      responses:
+        200:
+          description: GET successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
   /product/hooked/{slug}:
     get:
       tags:

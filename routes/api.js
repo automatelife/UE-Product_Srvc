@@ -18,6 +18,9 @@ router.get('/', (req, res, next) => {
     });
 });
 
+//Public content
+router.get('/public/products', product.getPublicProducts);
+
 //register and authorization
 router.get('/product', authApi.isBearerAuthenticated, product.getProducts);
 router.post('/product', authApi.isBearerAuthenticated, product.postProduct);

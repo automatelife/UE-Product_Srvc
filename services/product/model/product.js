@@ -6,6 +6,8 @@ import Promiseb from 'bluebird';
 const mongoose = Promiseb.promisifyAll(require('mongoose'));
 import moment from 'moment';
 
+import config from '../../../config';
+
 // Define our user schema
 const productSchema = new mongoose.Schema({
     name: {
@@ -17,6 +19,10 @@ const productSchema = new mongoose.Schema({
         type: String,
         unique: true,
         required: true
+    },
+    logo: {
+        type: String,
+        default: config.defaultLogo
     },
     url: {
         type: String,
