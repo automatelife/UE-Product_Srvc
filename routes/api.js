@@ -3,6 +3,8 @@ import product from '../services/product/controller/api';
 import authApi from '../services/auth/controller/api';
 import helper from '../services/helper';
 import logApi from '../services/log/controller/api';
+const pack = require('../package.json');
+
 const router = express.Router();
 
 /* GET api listing. */
@@ -11,7 +13,7 @@ router.get('/', (req, res, next) => {
         err: null,
         message: {
             api: 'UE-Product_Srvc',
-            version: '1.0.0',
+            version: pack.version,
             baseURL: '/api',
             copyright: 'Copyright (c) 2017 theBoEffect LLC'
         }

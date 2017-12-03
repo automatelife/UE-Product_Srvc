@@ -4,13 +4,14 @@
 
 import Promiseb from 'bluebird';
 import log from '../../../services/log/controller/log';
-const Product = Promiseb.promisifyAll(require('../model/product').default);
+import Product from '../model/product';
+//const Product = Promiseb.promisifyAll(require('../model/product').default);
 import send from '../../callback';
 const Intent = Promiseb.promisifyAll(require('../../events/controller/event').default);
 
 export default {
 	getProducts(cb) {
-		Product.findAsync({})
+		Product.find({})
 			.then(results => cb(null, send.success(results)))
 			.catch(err => cb(send.failErr(err), null));
 	},
@@ -78,7 +79,7 @@ export default {
 	},
     getPublicProducts() {
 		return new Promise((resolve, reject) => {
-            Product.findAsync({})
+            Product.find({})
                 .then((results) => {
             		let output = [];
             		results.forEach((prod) => {

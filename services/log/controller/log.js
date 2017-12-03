@@ -15,8 +15,8 @@ export default {
 			data: options.data
 		});
 
-		log.saveAsync()
-			.then(saved => cb(null, send.successSaved(saved)))
+		log.save()
+			.then(saved => cb(null, send.success(saved)))
 			.catch(err => cb(send.failErr(err), null));
 
 	},
@@ -27,7 +27,7 @@ export default {
 			data
 		});
 
-		log.saveAsync()
+		log.save()
 			.then(() => {
 				//return cb(null, send.successSaved(saved));
 			})

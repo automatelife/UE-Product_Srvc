@@ -1,9 +1,8 @@
 /**
  * Created by borzou on 9/27/16.
  */
-import Promiseb from 'bluebird';
-
-const mongoose = Promiseb.promisifyAll(require('mongoose'));
+import mongoose from 'mongoose';
+mongoose.Promise = Promise;
 import bcrypt from 'bcrypt-nodejs';
 
 // Define our user schema

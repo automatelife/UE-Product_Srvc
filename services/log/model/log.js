@@ -2,9 +2,8 @@
  * Created by borzou on 10/23/16.
  */
 
-import Promiseb from 'bluebird';
-
-const mongoose = Promiseb.promisifyAll(require('mongoose'));
+import mongoose from 'mongoose';
+mongoose.Promise = Promise;
 import moment from 'moment';
 
 // Define our user schema

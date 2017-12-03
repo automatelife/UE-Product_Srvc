@@ -9,13 +9,10 @@ import logger from 'morgan';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import swagger from 'tbe-swagger2-express';
-
-//const fs = require('fs');
-//const moment = require('moment');
-
 import routes from './routes/index';
 import api from './routes/api';
 import config from './config';
+const pack = require('./package.json');
 
 const app = express();
 const hDomain = (process.env.HOST_DOMAIN) ? process.env.HOST_DOMAIN : config.swaggerDomain;
@@ -46,7 +43,7 @@ app.use(function(req, res, next) {
 });
 
 app.use(swagger.init(app, {
-	apiVersion: '1.0',
+	apiVersion: pack.version,
 	swaggerVersion: '2.0',
 	host: hDomain,
 	basePath: '/api',
@@ -55,7 +52,7 @@ app.use(swagger.init(app, {
 	swaggerUI: './public/swagger',
 	schemes: [swagSchema],
 	info: {
-		version: '1.0.0',
+		version: pack.version,
 		title: 'United Effects Product Authorization',
 		description: 'UE Product registers products to have licenses and users registered against. All endpoints require ADMIN access except those with webhook control.'
 	},

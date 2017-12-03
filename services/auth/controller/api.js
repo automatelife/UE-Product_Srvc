@@ -23,5 +23,6 @@ export default {
 		helper.sendJson(res, {err:null, data: req.user});
 	},
 	isAuthenticated: auth.isBasicAuthenticated,
-	isBearerAuthenticated: auth.isBearerAuthenticated
+	isBearerAuthenticated: auth.isBearerAuthenticated,
+    isBasicOrBearer: auth.isBasicOrBearer
 };

@@ -4,7 +4,8 @@
 
 import Promiseb from 'bluebird';
 
-const Intent = Promiseb.promisifyAll(require('../model/intent').default);
+//const Intent = Promiseb.promisifyAll(require('../model/intent').default);
+import Intent from '../model/intent';
 import rq from 'request';
 const request = Promiseb.promisify(rq);
 import send from '../../callback';
@@ -15,7 +16,7 @@ const eventFactory = {
 	createIntent(options, cb) {
 		const intent = new Intent(options);
 
-		intent.saveAsync()
+		intent.save()
 			.then(result => cb(null, result))
 			.catch(error => cb(send.fail500(error), null));
 	},

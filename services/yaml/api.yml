@@ -489,11 +489,6 @@ definitions:
         type: string
       creator:
         type: string
-      roles:
-        schema:
-          type: array
-          items:
-            type: string
       private:
         type: boolean
         default: false

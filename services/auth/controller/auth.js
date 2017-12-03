@@ -6,7 +6,8 @@ import passport from 'passport';
 import Promiseb from 'bluebird';
 import {BasicStrategy} from 'passport-http';
 import {Strategy as BearerStrategy} from 'passport-http-bearer';
-const Token = Promiseb.promisifyAll(require('../model/auth').default);
+import Token from '../model/auth';
+//const Token = Promiseb.promisifyAll(require('../model/auth').default);
 import moment from 'moment';
 import rq from 'request';
 const request = Promiseb.promisify(rq);
@@ -72,7 +73,7 @@ passport.use('bearer', new BearerStrategy(
 
 			if(!product) return callback(null, false);
 			if(!domain) return callback(null, false);
-			Token.findOneAsync({ user_id: userId, product_slug: product, domain_slug: domain })
+			Token.findOne({ user_id: userId, product_slug: product, domain_slug: domain })
 				.then(token => {
 					if (!token) {
 						getBearerToken(accessToken, (err, result) => callback(err, result));
@@ -145,8 +146,9 @@ passport.deserializeUser((user, done) => {
 const authFactory = {
 	isBearerAuthenticated: passport.authenticate('bearer', { session: false }),
 	isBasicAuthenticated: passport.authenticate('basic', {session: false}),
+	isBasicOrBearer: passport.authenticate(['basic', 'bearer'], {session: false}),
 	saveToken(user, access, tokenVal, callback) {
-		Token.findOneAndRemoveAsync({user_id: user._id, product_slug: access.product, domain_slug: access.domain})
+		Token.findOneAndRemove({user_id: user._id, product_slug: access.product, domain_slug: access.domain})
 			.then(() => {
 				const tCreated = user.token_created;
 
@@ -165,7 +167,7 @@ const authFactory = {
 					created: tCreated
 				});
 
-				token.saveAsync()
+				token.save()
 					.then(saved => {
 						callback(null, saved);
 					})

@@ -1,9 +1,8 @@
 /**
  * Created by borzou on 1/29/17.
  */
-import Promiseb from 'bluebird';
-
-const mongoose = Promiseb.promisifyAll(require('mongoose'));
+import mongoose from 'mongoose';
+mongoose.Promise = Promise;
 import moment from 'moment';
 
 import config from '../../../config';
@@ -37,6 +36,9 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    /**
+     * This doesn't do anything... it is depreciated and should be removed in future versions
+     */
     roles: {
         type: Array,
         default: ['admin']
