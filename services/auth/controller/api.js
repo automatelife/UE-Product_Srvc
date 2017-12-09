@@ -38,7 +38,6 @@ export default {
         return helper.sendUnauthorized(res);
     },
 	superAdminOnly (req, res, next) {
-		console.info(JSON.stringify(req.user, null, 2));
 		if(req.user.role === 1) return next();
         return helper.sendUnauthorized(res);
 	},
