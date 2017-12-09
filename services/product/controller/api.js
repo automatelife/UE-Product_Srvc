@@ -10,10 +10,10 @@ import config from '../../../config';
 const Intent = Promiseb.promisifyAll(require('../../events/controller/event').default);
 import log from '../../log/controller/log';
 import readyEvents from '../../../events';
+import auth from '../../auth/controller/auth';
 
 export default {
 	getProducts(req, res) {
-		if(req.user.role!==1) respond.sendUnauthorized(res);
 		product.getProductsAsync()
 			.then(output => respond.sendJson(res, output))
 			.catch(error => //if(error.stack) console.log(error.stack);
@@ -26,7 +26,6 @@ export default {
                 respond.sendJson(res, error));
 	},
 	postProduct(req, res) {
-		if(req.user.role!==1) respond.sendUnauthorized(res);
 		if(!req.body.name) respond.sendJson(res, send.fail417('Name is a required input'));
 		if(!req.body.slug) req.body['slug'] = req.body.name.trim().toLowerCase().replace(/ /g, '_').replace(/\./g, '').replace(/!/g, '').replace(/\?/g, '').replace(/{/g, '').replace(/}/g, '');
 		if (req.body.enable_first_user) delete req.body.enable_first_user;
@@ -43,17 +42,12 @@ export default {
 			.catch(error => respond.sendJson(res, error));
 	},
 	returnProductSlug(req, res, next) {
-		let authorized = false;
-        if (req.user.role === 1) authorized = true;
-        if (req.user.permissions) {
-            if(req.user.permissions.product) if(req.user.permissions.product[req.params.slug]) {
-                if(req.user.permissions.product[req.params.slug].admin) authorized = true;
-            }
-        }
-        if (!authorized) return respond.sendUnauthorized(res);
 		product.returnProductSlugAsync(req.params.slug, req.query.active)
-			.then(output => respond.sendJson(res, output))
-			.catch(error => {
+			.then((output) => {
+                if (!auth.thisValidProductAdmin(req.user, output.data.slug)) return respond.sendUnauthorized(res);
+				return respond.sendJson(res, output)
+            })
+			.catch((error) => {
 				console.error(error);
 				next();
 			});
@@ -61,14 +55,7 @@ export default {
 	returnProduct(req, res) {
 		product.returnProductAsync(req.params.id)
 			.then((output) => {
-                let authorized = false;
-                if (req.user.role === 1) authorized = true;
-                if (req.user.permissions) {
-                    if(req.user.permissions.product) if(req.user.permissions.product[output.data.slug]) {
-                        if(req.user.permissions.product[output.data.slug].admin) authorized = true;
-                    }
-                }
-                if (!authorized) return respond.sendUnauthorized(res);
+                if (!auth.thisValidProductAdmin(req.user, output.data.slug)) return respond.sendUnauthorized(res);
 				return respond.sendJson(res, output)
             })
 			.catch(error => respond.sendJson(res, error));
@@ -80,14 +67,7 @@ export default {
         if (req.body.enable_first_user) delete req.body.enable_first_user;
 		product.returnProductAsync(req.params.id)
 			.then((prod) => {
-                let authorized = false;
-                if (req.user.role === 1) authorized = true;
-                if (req.user.permissions) {
-                    if(req.user.permissions.product) if(req.user.permissions.product[prod.data.slug]) {
-                        if(req.user.permissions.product[prod.data.slug].admin) authorized = true;
-                    }
-                }
-                if (!authorized) return 'unauthorized';
+                if (!auth.thisValidProductAdmin(req.user, prod.data.slug)) return 'unauthorized';
 
 				if(!req.body.name && !req.body.slug && typeof req.body.active === 'undefined') return 'SAFE';
 				const output = [];
@@ -139,15 +119,7 @@ export default {
 		let eventRec = [];
 		product.returnProductAsync(req.params.id)
 			.then(prod => {
-                let authorized = false;
-                if (req.user.role === 1) authorized = true;
-                if (req.user.permissions) {
-                    if(req.user.permissions.product) if(req.user.permissions.product[prod.data.slug]) {
-                        if(req.user.permissions.product[prod.data.slug].admin) authorized = true;
-                    }
-                }
-                if (!authorized) return 'unauthorized';
-
+                if (!auth.thisValidProductAdmin(req.user, prod.data.slug)) return 'unauthorized';
 				const output = [];
 				readyEvents.productUpdates({active: false}, prod.data).forEach(event => {
 					output.push(product.prepareIntentAsync(event));

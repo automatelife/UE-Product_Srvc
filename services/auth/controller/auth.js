@@ -179,7 +179,41 @@ const authFactory = {
 				callback(error, null);
 			});
 
-	}
+	},
+    validProductAdmin (user) {
+        if(user.role === 1) return true;
+        else if(user.activity) if (user.activity.product) if(user.permissions) if(user.permissions.product) if(user.permissions.product[user.activity.product]) {
+            return user.permissions.product[user.activity.product].admin;
+        }
+        return false;
+    },
+    validDomainAdmin (user) {
+        if(user.role === 1) return true;
+        else if(user.activity) if (user.activity.domain) if(user.permissions) if(user.permissions.domain) if(user.permissions.domain[user.activity.domain]) {
+            return user.permissions.domain[user.activity.domain].admin;
+        }
+        return false;
+    },
+    validAdmin (user) {
+        if(user.role === 1) return true;
+        else if(this.validProductAdmin(user)) return true;
+        else if(this.validDomainAdmin(user)) return true;
+        return false;
+    },
+    thisValidProductAdmin (user, product) {
+        if(user.role === 1) return true;
+        else if(user.permissions) if(user.permissions.product) if(user.permissions.product[product]) {
+            return user.permissions.product[product].admin;
+        }
+        return false;
+    },
+    thisValidDomainAdmin (user, domain) {
+        if(user.role === 1) return true;
+        else if(user.permissions) if(user.permissions.domain) if(user.permissions.domain[domain]) {
+            return user.permissions.domain[domain].admin;
+        }
+        return false;
+    },
 };
 
 export default authFactory;

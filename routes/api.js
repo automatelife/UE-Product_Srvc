@@ -24,23 +24,23 @@ router.get('/', (req, res, next) => {
 router.get('/public/products', product.getPublicProducts);
 
 //register and authorization
-router.get('/product', authApi.isBearerAuthenticated, product.getProducts);
-router.post('/product', authApi.isBearerAuthenticated, product.postProduct);
-router.get('/product/:slug', authApi.isBearerAuthenticated, product.returnProductSlug);
+router.get('/product', [authApi.isBearerAuthenticated, authApi.superAdminOnly], product.getProducts);
+router.post('/product', [authApi.isBearerAuthenticated, authApi.superAdminOnly], product.postProduct);
 router.get('/product/hooked/:slug', product.returnProductSlugHook);
-router.get('/product/:id', authApi.isBearerAuthenticated, product.returnProduct);
-router.patch('/product/:id', authApi.isBearerAuthenticated, product.findOneAndUpdate);
-router.delete('/product/:id', authApi.isBearerAuthenticated, product.deleteProduct);
-router.patch('/product/:id/firstuser/:option', authApi.isBearerAuthenticated, product.changeFirstUserUpdate); //Super admin only
+router.get('/product/:slug', authApi.isBearerAuthenticated, product.returnProductSlug);
+router.get('/product/:id', authApi.isBearerAuthenticated, product.returnProduct); //custom
+router.patch('/product/:id', authApi.isBearerAuthenticated, product.findOneAndUpdate); //custom
+router.delete('/product/:id', [authApi.isBearerAuthenticated, authApi.superAdminOnly], product.deleteProduct);
+router.patch('/product/:id/firstuser/:option', [authApi.isBearerAuthenticated, authApi.superAdminOnly], product.changeFirstUserUpdate);
 
-//logs
-router.get('/log/definitions', authApi.isBearerAuthenticated, logApi.logDefinitions);
-router.post('/log', authApi.isBearerAuthenticated, logApi.newLog);
-router.get('/logs', authApi.isBearerAuthenticated, logApi.returnLogs);
-router.post('/logs/range', authApi.isBearerAuthenticated, logApi.returnRange);
-router.get('/logs/:code', authApi.isBearerAuthenticated, logApi.returnByCode);
-router.get('/log/search', authApi.isBearerAuthenticated, logApi.search);
-router.get('/health', authApi.isBearerAuthenticated, (req, res) => {
+//logs - super only
+router.get('/log/definitions', [authApi.isBearerAuthenticated, authApi.superAdminOnly], logApi.logDefinitions);
+router.post('/log', [authApi.isBearerAuthenticated, authApi.superAdminOnly], logApi.newLog);
+router.get('/logs', [authApi.isBearerAuthenticated, authApi.superAdminOnly], logApi.returnLogs);
+router.post('/logs/range', [authApi.isBearerAuthenticated, authApi.superAdminOnly], logApi.returnRange);
+router.get('/logs/:code', [authApi.isBearerAuthenticated, authApi.superAdminOnly], logApi.returnByCode);
+router.get('/log/search', [authApi.isBearerAuthenticated, authApi.superAdminOnly], logApi.search);
+router.get('/health', [authApi.isBearerAuthenticated, authApi.superAdminOnly], (req, res) => {
     res.json({err: null, data: {server: 'running', mongo: helper.mongoStatus()}});
 });
 
