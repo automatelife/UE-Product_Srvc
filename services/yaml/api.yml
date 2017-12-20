@@ -465,6 +465,9 @@ definitions:
         type: string
       url:
         type: string
+      logo:
+        type: string
+        description: Optional. Defaults to UEAuth logo. This is a reference logo, preferable square, used to identify the product in ueauth.io. Can be the same as brand.profileLogo.
       dnsRef:
         type: string
       vanity:
@@ -480,6 +483,50 @@ definitions:
         type: boolean
         default: true
         description: If this is true, only admins can generate new licenses/domains
+      brand:
+        type: object
+        properties:
+          brandedName:
+            type: string
+            description: This is what the full product name should be displayed as.
+          primaryLogo:
+            type: object
+            properties:
+              uri:
+                type: string
+              contentId:
+                type: string
+            description: This is a uri to a logo image (specs coming). Content ID optional.
+          backgroundImage:
+            type: object
+            properties:
+              uri:
+                type: string
+              contentId:
+                type: string
+            description: This is a uri to a background image (specs coming). Content ID optional.
+          companyName:
+            type: string
+            description: This is the legal company name or whatever official name the product should reference
+          welcomeMessage:
+            type: string
+            description: This welcome message is displayed above login
+          profileLogo:
+            type: object
+            properties:
+              uri:
+                type: string
+              contentId:
+                type: string
+            description: A square version of the logo. Strongly recommended. Content ID optional.
+          sidebarImage:
+            type: object
+            properties:
+              uri:
+                type: string
+              contentId:
+                type: string
+            description: This is a uri to a background image for the sidebar (specs coming). Content ID optional.
       active:
         type: boolean
       meta:

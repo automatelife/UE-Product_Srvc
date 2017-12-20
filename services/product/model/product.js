@@ -75,6 +75,27 @@ const productSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    brand: {
+        brandName: String,
+        primaryLogo: {
+            uri: String,
+            contentId: String
+        },
+        backgroundImage: {
+            uri: String,
+            contentId: String
+        },
+        companyName: String,
+        welcomeMessage: String,
+        profileLogo: {
+            uri: String,
+            contentId: String
+        },
+        sidebarImage: {
+            uri: String,
+            contentId: String
+        },
+    },
     active: {
         type: Boolean,
         default: true
