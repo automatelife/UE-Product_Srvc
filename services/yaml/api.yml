@@ -465,6 +465,11 @@ definitions:
         type: string
       url:
         type: string
+      dnsRef:
+        type: string
+      vanity:
+        type: boolean
+        default: false
       private:
         type: boolean
         default: false

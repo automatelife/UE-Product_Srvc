@@ -17,6 +17,9 @@ export default {
 	},
 	postProduct(options, cb) {
 		if(!options.private_code) options.private_code = uid(512);
+		if(!options.url) return cb(send.fail400('URL is required'), null);
+		if(!options.dnsRef && !options.vanity) return cb(send.fail400('Please include a DNS subdomain reference. This is how you are able access your instance of the portal. This can be anything (unless you want a vanity url compatible with your domain), but we recommend it being the domain of your primary url'), null);
+		if(options.vanity === true) options.dnsRef = options.url.split('//')[1].split('.')[0];
 		const product = new Product(options);
 
 		product.save()
