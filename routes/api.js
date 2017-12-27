@@ -22,6 +22,7 @@ router.get('/', (req, res, next) => {
 
 //Public content
 router.get('/public/products', product.getPublicProducts);
+router.get('/public/product/:dns', product.getPublicProduct);
 
 //register and authorization
 router.get('/product', [authApi.isBearerAuthenticated, authApi.superAdminOnly], product.getProducts);

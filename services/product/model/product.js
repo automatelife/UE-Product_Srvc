@@ -69,7 +69,8 @@ const productSchema = new mongoose.Schema({
     },
     dnsRef: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     vanity: {
         type: Boolean,

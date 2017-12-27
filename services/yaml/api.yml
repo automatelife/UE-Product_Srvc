@@ -251,6 +251,33 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/defaultError'
+  /public/product/{dns}:
+   get:
+      tags:
+        - Publicly Available
+      summary: Get a product by DNS reference
+      description: Get a product by DNS reference
+      produces:
+        - application/json
+      parameters:
+      - name: dns
+        in: path
+        type: string
+        required: true
+        description: DNS reference to lookup
+      responses:
+        200:
+          description: GET successful
+          schema:
+            $ref: '#/definitions/success'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/defaultError'
+        500:
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/defaultError'
   /product/hooked/{slug}:
     get:
       tags:
@@ -539,6 +566,8 @@ definitions:
         type: string
       url:
         type: string
+      dnsRef:
+        type: string
       creator:
         type: string
       private:
@@ -546,6 +575,54 @@ definitions:
         default: false
       private_code:
         type: string
+      license_lock:
+        type: boolean
+        default: true
+        description: If this is true, only admins can generate new licenses/domains
+      brand:
+        type: object
+        properties:
+          brandedName:
+            type: string
+            description: This is what the full product name should be displayed as.
+          primaryLogo:
+            type: object
+            properties:
+              uri:
+                type: string
+              contentId:
+                type: string
+            description: This is a uri to a logo image (specs coming). Content ID optional.
+          backgroundImage:
+            type: object
+            properties:
+              uri:
+                type: string
+              contentId:
+                type: string
+            description: This is a uri to a background image (specs coming). Content ID optional.
+          companyName:
+            type: string
+            description: This is the legal company name or whatever official name the product should reference
+          welcomeMessage:
+            type: string
+            description: This welcome message is displayed above login
+          profileLogo:
+            type: object
+            properties:
+              uri:
+                type: string
+              contentId:
+                type: string
+            description: A square version of the logo. Strongly recommended. Content ID optional.
+          sidebarImage:
+            type: object
+            properties:
+              uri:
+                type: string
+              contentId:
+                type: string
+            description: This is a uri to a background image for the sidebar (specs coming). Content ID optional.
       active:
         type: boolean
       meta:

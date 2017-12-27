@@ -153,5 +153,10 @@ export default {
 				});
 				return respond.sendJson(res, error);
 			});
+	},
+    getPublicProduct (req, res) {
+		product.getPublicProduct(req.params.dns)
+			.then(result => respond.sendJson(res, result))
+			.catch(error => respond.sendJson(res, error));
 	}
 };

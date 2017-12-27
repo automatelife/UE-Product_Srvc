@@ -27,7 +27,10 @@ export default {
                 if(!options.private_code) delete saved.privcate_code;
 				return cb(null, send.success(saved))
             })
-			.catch(err => cb(send.failErr(err), null));
+			.catch((err) => {
+                if(err.code===11000) return cb(send.fail409('Duplicate entry detected.'), null);
+				return cb(send.failErr(err), null)
+            });
 	},
 	returnProductSlug(slug, active, cb) {
 		const query = {slug};
@@ -57,7 +60,10 @@ export default {
 				if(!result) return cb(null, null);
 				return cb(null, send.success(result));
 			})
-			.catch(error => cb(send.failErr(error), null));
+			.catch((error) => {
+				if(error.code===11000) return cb(send.fail409('Duplicate entry detected.'), null);
+				return cb(send.failErr(error), null)
+            });
 	},
     changeFirstUserUpdate(options) {
 		return new Promise((resolve, reject) => {
@@ -100,6 +106,29 @@ export default {
             		return Promise.all(output);
                 })
 				.then(completed => resolve(send.success(completed)))
+                .catch(err => reject(send.failErr(err)));
+		})
+	},
+    getPublicProduct(dns) {
+		return new Promise((resolve, reject) => {
+			Product.findOne({dnsRef: dns})
+                .then((prod) => {
+					if(prod) return {
+						name: prod.name,
+						slug: prod.slug,
+						logo: prod.logo,
+						dnsRef: prod.dnsRef,
+						url: prod.url,
+						private: prod.private,
+						license_lock: prod.license_lock,
+						brand: prod.brand
+					};
+					return null;
+                })
+                .then((completed) => {
+					if(completed) return resolve(send.success(completed));
+					return reject(send.fail404('DNS reference not found'));
+                })
                 .catch(err => reject(send.failErr(err)));
 		})
 	}
