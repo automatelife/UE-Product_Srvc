@@ -492,9 +492,6 @@ definitions:
         type: string
       url:
         type: string
-      logo:
-        type: string
-        description: Optional. Defaults to UEAuth logo. This is a reference logo, preferable square, used to identify the product in ueauth.io. Can be the same as brand.profileLogo.
       dnsRef:
         type: string
       vanity:

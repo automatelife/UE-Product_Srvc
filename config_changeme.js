@@ -11,20 +11,22 @@ const config = {
     protocol: process.env.PROTOCOL || 'http',
     defaultLogoPath: process.env.DEFAULTLOGO || '/img/default.png',
     licenseApiServer: process.env.LICENSE || 'http://localhost:4020',
+    profileLogo: 'https://ue-platform-content.s3.amazonaws.com/color_logo_transparent%40500px.png',
+    primaryLogo: 'https://ue-platform-content.s3.amazonaws.com/color_logo_transparent%401800px.png',
     defaultProduct: {
         name: 'United Effects Auth',
         slug: 'united_effects_auth',
-        url: 'https://auth.unitedeffects.com',
-        owner: 'admin',
+        url: 'https://app.uauth.io',
+        dnsRef: 'app',
+        creator: 'admin',
         private: true,
         enable_first_user: true,
+        license_lock: true,
         private_code: process.env.DEFAULT_PROD_CODE || 'YOUR-PRIVATE-CODE-HERE', //Never display this anywhere and make sure you disable 'enable_first_user' later
         meta: {
             info: 'Auto created on startup'
         }
     }
 };
-
-config.defaultLogo = `${config.protocol}://${config.swaggerDomain}${config.defaultLogoPath}`;
 
 module.exports = config;

@@ -19,9 +19,9 @@ const productSchema = new mongoose.Schema({
         unique: true,
         required: true
     },
+    // depreciated in favor of brand object
     logo: {
-        type: String,
-        default: config.defaultLogo
+        type: String
     },
     url: {
         type: String,
@@ -79,7 +79,10 @@ const productSchema = new mongoose.Schema({
     brand: {
         brandName: String,
         primaryLogo: {
-            uri: String,
+            uri: {
+                type: String,
+                default: config.primaryLogo
+            },
             contentId: String
         },
         backgroundImage: {
@@ -89,7 +92,10 @@ const productSchema = new mongoose.Schema({
         companyName: String,
         welcomeMessage: String,
         profileLogo: {
-            uri: String,
+            uri: {
+                type: String,
+                default: config.profileLogo
+            },
             contentId: String
         },
         sidebarImage: {
