@@ -11,7 +11,7 @@ const config = {
     protocol: process.env.PROTOCOL || 'http',
     defaultLogoPath: process.env.DEFAULTLOGO || '/img/default.png',
     licenseApiServer: process.env.LICENSE || 'http://localhost:4020',
-    profileLogo: 'https://ue-platform-content.s3.amazonaws.com/color_logo_transparent%40500px.png',
+    profileLogo: 'https://ue-platform-content.s3.amazonaws.com/white_logo_transparent%40500px.png',
     primaryLogo: 'https://ue-platform-content.s3.amazonaws.com/color_logo_transparent%401800px.png',
     defaultProduct: {
         name: 'United Effects Auth',
