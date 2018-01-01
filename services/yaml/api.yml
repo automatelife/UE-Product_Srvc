@@ -579,7 +579,7 @@ definitions:
       brand:
         type: object
         properties:
-          brandedName:
+          brandName:
             type: string
             description: This is what the full product name should be displayed as.
           primaryLogo:
