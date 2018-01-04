@@ -17,7 +17,10 @@ export default {
 
 		log.save()
 			.then(saved => cb(null, send.success(saved)))
-			.catch(err => cb(send.failErr(err), null));
+			.catch((err) => {
+                if(err.code===11000) return cb(send.fail409('Duplicate entry detected.'), null);
+				return cb(send.failErr(err), null)
+            });
 
 	},
 	asyncEnterLog(message, code, data) {
@@ -28,13 +31,7 @@ export default {
 		});
 
 		log.save()
-			.then(() => {
-				//return cb(null, send.successSaved(saved));
-			})
-			.catch(err => {
-				console.info(err);
-				//return cb(send.failErr(err), null);
-			});
+			.catch(err => console.info(err));
 	},
 	simpleLog(data) {
 		//will phase this out...
@@ -43,9 +40,8 @@ export default {
 			code: 'NOTIFICATION'
 		});
 
-		log.save(err => {
-			if(err) console.info(err);
-		});
+		log.save()
+			.catch(err => console.info(err));
 	},
 	notify(message, data) {
 		const log = new Log({
@@ -53,9 +49,8 @@ export default {
 			code: 'NOTIFICATION',
 			data
 		});
-		log.save(err => {
-			if(err) console.info(err);
-		});
+        log.save()
+            .catch(err => console.info(err));
 	},
 	error(message, data) {
 		const log = new Log({
@@ -63,9 +58,8 @@ export default {
 			code: 'ERROR',
 			data
 		});
-		log.save(err => {
-			if(err) console.info(err);
-		});
+        log.save()
+            .catch(err => console.info(err));
 	},
 	success(message, data) {
 		const log = new Log({
@@ -73,9 +67,8 @@ export default {
 			code: 'SUCCESS',
 			data
 		});
-		log.save(err => {
-			if(err) console.info(err);
-		});
+        log.save()
+            .catch(err => console.info(err));
 	},
 	unexpected(message, data) {
 		const log = new Log({
@@ -83,9 +76,8 @@ export default {
 			code: 'UNEXPECTED',
 			data
 		});
-		log.save(err => {
-			if(err) console.info(err);
-		});
+        log.save()
+            .catch(err => console.info(err));
 	},
 	getLogs(cb) {
 		Log.find({}).sort({created: -1}).limit(600)

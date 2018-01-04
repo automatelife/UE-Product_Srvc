@@ -74,6 +74,7 @@ export default {
                 })
                 .catch(error => {
                 	log.error(error);
+                    if(err.code===11000) return cb(send.fail409('Duplicate entry detected.'), null);
                 	return reject(send.failErr(error));
                 });
 		})
@@ -84,7 +85,10 @@ export default {
 				if(!event) return cb('Event Intent Not Created', null);
 				return cb(null, event);
 			})
-			.catch(error => cb(send.failErr(error), null));
+			.catch((error) => {
+                if(err.code===11000) return cb(send.fail409('Duplicate entry detected.'), null);
+				return cb(send.failErr(error), null)
+            });
 	},
     getPublicProducts() {
 		return new Promise((resolve, reject) => {
