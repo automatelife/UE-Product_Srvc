@@ -50,7 +50,7 @@ const productSchema = new mongoose.Schema({
     // if set to true, we require the private_code below (with enable_first_user == true) or an invite (userauth managed) to register
     private: {
         type: Boolean,
-        default: false
+        default: true
     },
     // this is an override to allow first user access. a 512 char key is auto generated to protect the funcitonality if one isn't provided
     private_code: {
