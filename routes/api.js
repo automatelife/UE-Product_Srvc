@@ -15,7 +15,7 @@ router.get('/', (req, res, next) => {
             api: 'UE-Product_Srvc',
             version: pack.version,
             baseURL: '/api',
-            copyright: 'Copyright (c) 2017 theBoEffect LLC'
+            copyright: 'Copyright (c) 2018 United Effects LLC'
         }
     });
 });
