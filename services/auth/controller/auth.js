@@ -59,6 +59,19 @@ passport.use('basic', new BasicStrategy({
 }
 ));
 
+function findToken (tokens, val) {
+    return new Promise(async (resolve, reject) => {
+        let theToken = null;
+        await Promise.all(tokens.map(async (token) => {
+            await token.verifyToken(val, (err, isMatch) => {
+                if(err) return reject(err);
+                if(isMatch) theToken = token;
+            });
+        }));
+        return resolve(theToken);
+    })
+}
+
 passport.use('bearer', new BearerStrategy(
 	(accessToken, callback) => {
 		try {
@@ -73,7 +86,11 @@ passport.use('bearer', new BearerStrategy(
 
 			if(!product) return callback(null, false);
 			if(!domain) return callback(null, false);
-			Token.findOne({ user_id: userId, product_slug: product, domain_slug: domain })
+			Token.find({ user_id: userId, product_slug: product, domain_slug: domain })
+                .then((token)=>{
+                    if(token.length===0) return null;
+                    return findToken(token, tokenVal);
+                })
 				.then(token => {
 					if (!token) {
 						getBearerToken(accessToken, (err, result) => callback(err, result));
@@ -148,7 +165,11 @@ const authFactory = {
 	isBasicAuthenticated: passport.authenticate('basic', {session: false}),
 	isBasicOrBearer: passport.authenticate(['basic', 'bearer'], {session: false}),
 	saveToken(user, access, tokenVal, callback) {
-		Token.findOneAndRemove({user_id: user._id, product_slug: access.product, domain_slug: access.domain})
+		Token.find({user_id: user._id, product_slug: access.product, domain_slug: access.domain})
+            .then((toks) => {
+                if(toks.length>5) return Token.remove({_id: toks[0]._id});
+                return true;
+            })
 			.then(() => {
 				const tCreated = user.token_created;
 
