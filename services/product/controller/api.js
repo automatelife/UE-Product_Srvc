@@ -67,7 +67,7 @@ export default {
         if (req.body.enable_first_user) delete req.body.enable_first_user;
 		product.returnProductAsync(req.params.id)
 			.then((prod) => {
-                if (!auth.thisValidProductAdmin(req.user, prod.data.slug)) return 'unauthorized';
+                if (!auth.thisValidProductAdminOnly(req.user, prod.data.slug)) return 'unauthorized';
 
 				if(!req.body.name && !req.body.slug && typeof req.body.active === 'undefined') return 'SAFE';
 				const output = [];
@@ -119,7 +119,7 @@ export default {
 		let eventRec = [];
 		product.returnProductAsync(req.params.id)
 			.then(prod => {
-                if (!auth.thisValidProductAdmin(req.user, prod.data.slug)) return 'unauthorized';
+                if (!auth.thisValidProductAdminOnly(req.user, prod.data.slug)) return 'unauthorized';
 				const output = [];
 				readyEvents.productUpdates({active: false}, prod.data).forEach(event => {
 					output.push(product.prepareIntentAsync(event));

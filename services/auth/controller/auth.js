@@ -204,14 +204,14 @@ const authFactory = {
     validProductAdmin (user) {
         if(user.role === 1) return true;
         else if(user.activity) if (user.activity.product) if(user.permissions) if(user.permissions.product) if(user.permissions.product[user.activity.product]) {
-            return user.permissions.product[user.activity.product].admin;
+            if(user.permissions.product[user.activity.product].admin || user.permissions.product[user.activity.product].manager) return true;
         }
         return false;
     },
     validDomainAdmin (user) {
         if(user.role === 1) return true;
         else if(user.activity) if (user.activity.domain) if(user.permissions) if(user.permissions.domain) if(user.permissions.domain[user.activity.domain]) {
-            return user.permissions.domain[user.activity.domain].admin;
+            if(user.permissions.domain[user.activity.domain].admin || user.permissions.domain[user.activity.domain].manager) return true;
         }
         return false;
     },
@@ -224,6 +224,13 @@ const authFactory = {
     thisValidProductAdmin (user, product) {
         if(user.role === 1) return true;
         else if(user.permissions) if(user.permissions.product) if(user.permissions.product[product]) {
+            if(user.permissions.product[product].admin || user.permissions.product[product].manager) return true;
+        }
+        return false;
+    },
+    thisValidProductAdminOnly (user, product) {
+        if(user.role === 1) return true;
+        else if(user.permissions) if(user.permissions.product) if(user.permissions.product[product]) {
             return user.permissions.product[product].admin;
         }
         return false;
@@ -231,10 +238,17 @@ const authFactory = {
     thisValidDomainAdmin (user, domain) {
         if(user.role === 1) return true;
         else if(user.permissions) if(user.permissions.domain) if(user.permissions.domain[domain]) {
-            return user.permissions.domain[domain].admin;
+            if(user.permissions.domain[domain].admin || user.permissions.domain[domain].manager) return true;
         }
         return false;
     },
+	thisValidDomainAdminOnly (user, domain) {
+        if(user.role === 1) return true;
+        else if(user.permissions) if(user.permissions.domain) if(user.permissions.domain[domain]) {
+            return user.permissions.domain[domain].admin;
+        }
+        return false;
+	}
 };
 
 export default authFactory;
