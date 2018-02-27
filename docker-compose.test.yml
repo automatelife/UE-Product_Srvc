@@ -1,0 +1,8 @@
+#TBD
+# version: '3'
+# services:
+#   app:
+#     build:
+#       context: .
+#     image: product_srvc
+#     command: npm test

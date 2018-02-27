@@ -41,3 +41,6 @@ jspm_packages
 public/bower_components/
 config.js
 config_old.js
+
+# docker setup
+data
