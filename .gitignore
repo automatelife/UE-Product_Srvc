@@ -38,7 +38,7 @@ jspm_packages
 
 # custom
 .idea/
-public/bower_components/
+public/bower_components
 config.js
 config_old.js
 

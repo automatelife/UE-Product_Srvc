@@ -1,11 +1,9 @@
-
 version: '3'
 services:
   ueproductsrv:
-    build:
-      context: .
-    volumes:
-      - .:/src
+    build: ./
+    # volumes:
+    #   - .:/src
     ports:
       - '4030:4030'
     links:
@@ -17,4 +15,3 @@ services:
       - ./data:/data/db
     ports:
       - "27017:27017"
-    
