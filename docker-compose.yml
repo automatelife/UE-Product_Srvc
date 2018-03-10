@@ -5,7 +5,7 @@ services:
     # volumes:
     #   - .:/src
     ports:
-      - '4030:4030'
+      - "4030:4030"
     links:
       - mongo
   mongo:

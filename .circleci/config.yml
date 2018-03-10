@@ -6,7 +6,8 @@ jobs:
       - image: docker:17.12.0-ce-git
     environment:
       - VER: "0.1"
-      - NAME: "ueproductsrv"
+      - REGISTERY: "jkoch"
+      - NAME: "product-srv"
     steps:
       - checkout
       - setup_remote_docker
@@ -32,7 +33,7 @@ jobs:
       - run:
           name: Build application Docker image
           command: |
-            docker build -t ue/${NAME}:${VER}.${CIRCLE_BUILD_NUM} .
+            docker build -t ${REGISTERY}/${NAME}:${VER}.${CIRCLE_BUILD_NUM} .
             # docker build --cache-from=app -t ue/${NAME}:${VER}.${CIRCLE_BUILD_NUM} .
       # - run:
       #     name: Save Docker image layer cache
@@ -43,19 +44,17 @@ jobs:
       #     key: v1-{{ .Branch }}-{{ epoch }}
       #     paths:
       #       - /caches/app.tar
-# test:
-#   post:
-#     - docker run -d -p 3000:3000 -e "SECRET_KEY_BASE=abcd1234" us.gcr.io/${PROJECT_NAME}/hello:$CIRCLE_SHA1; sleep 10
-#     - curl --retry 10 --retry-delay 5 -v http://localhost:3000
       #Tests
-      - run:
-          name: Run tests
-          command: |
-            docker-compose -f ./docker-compose.yml up -d; sleep 10
-            curl -- retry 10 --retry-delay 5 -v http://localhost:4030/api
-     # Login to GCE and push image
-      # - deploy:
-      #     name: Push application Docker image
+      # - run:
+      #     name: Run tests
       #     command: |
-      #       docker login -u $DOCKER_USER -p $DOCKER_PASS
-      #       docker push ue/app:${VER}.${CIRCLE_BUILD_NUM}
+      #       docker-compose -f ./docker-compose.yml up -d; sleep 10
+      #       curl -- retry 10 --retry-delay 5 -v http://localhost:4030/api
+     # Push Image
+      - deploy:
+          name: Push to Docker Hub (for now)
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              docker login -u $DOCKER_USER -p $DOCKER_PASS
+              docker push ${REGISTERY}/${NAME}:${VER}.${CIRCLE_BUILD_NUM}
+            fi
