@@ -31,7 +31,7 @@ jobs:
       #       set +o pipefail
       #       docker load -i /caches/app.tar | true
       - run:
-          name: Build application Docker image
+          name: Build Docker Image
           command: |
             docker build -t ${REGISTERY}/${NAME}:${VER}.${CIRCLE_BUILD_NUM} .
             # docker build --cache-from=app -t ue/${NAME}:${VER}.${CIRCLE_BUILD_NUM} .
@@ -55,6 +55,6 @@ jobs:
           name: Push to Docker Hub (for now)
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              docker login -u $DOCKER_USER -p $DOCKER_PASS
+              docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
               docker push ${REGISTERY}/${NAME}:${VER}.${CIRCLE_BUILD_NUM}
             fi
